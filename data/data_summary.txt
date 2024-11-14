@@ -1,0 +1,66 @@
+#######################
+### Comprehensive Summary of the MTA Ridership Dataset
+
+#### General Overview:
+The dataset provides systemwide daily ridership and traffic estimates across various transportation modes operated by the Metropolitan Transportation Authority (MTA). It includes comparisons against pre-pandemic ridership baselines to measure recovery or trends.
+
+#### Covered Transportation Modes:
+1. **Subways** (including Staten Island Railway)
+2. **Buses**
+3. **Long Island Rail Road (LIRR)**
+4. **Metro-North Railroad**
+5. **Access-A-Ride (AAR) Paratransit Service**
+6. **Bridges and Tunnels**
+
+#### Temporal Coverage:
+- Data starts from **March 1, 2020** for most modes.
+- For LIRR and Metro-North, data begins **April 1, 2020**.
+
+#### Data Columns and Characteristics (From Data Dictionary):
+The dataset includes the following fields:
+
+1. **Date**:
+   - Format: `YYYY-MM-DD`
+   - Type: Date
+   - Represents the date for which ridership or traffic data is reported.
+
+2. **Mode of Transportation**:
+   - Type: Categorical
+   - Values: `Subway`, `Bus`, `LIRR`, `Metro-North`, `AAR`, `Bridges and Tunnels`.
+   - Indicates the specific transportation mode covered in each record.
+
+3. **Daily Ridership/Traffic Volume**:
+   - Type: Integer
+   - Represents the estimated count of riders or vehicles.
+
+4. **Percentage of Pre-Pandemic Baseline**:
+   - Type: Float (percentage values)
+   - Calculated using the 2019 non-holiday weekday, Saturday, or Sunday/holiday averages for the same period.
+
+5. **Data Source/Collection Method**:
+   - Type: Text
+   - Describes the methodology, e.g., MetroCard/OMNY swipes for subways and buses, ticket sales models for railroads, scheduled trips for AAR, and toll collection data for bridges and tunnels.
+
+6. **Estimation Notes**:
+   - Type: Text
+   - Additional metadata or notes about data quality and reconciliation processes.
+
+#### Data Collection Methodology:
+- **Subways and Buses**: Data derived from MetroCard and OMNY swipes/taps, complemented by model-based estimates for certain periods.
+- **Railroads (LIRR and Metro-North)**: Estimated using ticket sales across various ticket types.
+- **Access-A-Ride**: Based on scheduled trips as an indicator of demand.
+- **Bridges and Tunnels**: Traffic volume collected through toll systems.
+
+#### Statistical and Analytic Considerations:
+- Figures may be subject to revisions due to reconciliation processes.
+- Pre-pandemic comparison methodology was updated in February 2023 to use 2019 averages for accurate baseline calculation.
+
+#### Limitations:
+- Data presented here may differ slightly from official totals published elsewhere by the MTA.
+- Currently, there are no usage restrictions for the data.
+
+#### Notes for Further Use:
+- This dataset can be used to analyze transit recovery trends post-pandemic, assess ridership across different modes, and perform temporal comparisons.
+- Ensure to align any comparative analysis with the revised methodology (2023) for consistency.
+
+This dataset provides a granular view of public transit ridership trends in New York, useful for planning, research, or operational optimization.
