@@ -10,7 +10,8 @@ from scripts.data_processing import MTARidershipData
 from scripts.visualization import (
     generate_overview_chart,
     generate_mode_comparison_chart,
-    generate_recovery_heatmap
+    generate_recovery_heatmap,
+    generate_yearly_comparison_chart
 )
 
 # Initialize and load data
@@ -244,11 +245,19 @@ tooltips = html.Div([
         • Weekday vs. weekend patterns
         • Seasonal variations in recovery
         • Mode-specific recovery trends"""
+    ),
+    create_tooltip(
+        "yearly-comparison-info",
+        """Compare ridership patterns across different years:
+        • 7-day moving average for smoother visualization
+        • Year-over-year seasonal patterns
+        • Recovery progression across years
+        • Monthly ridership trends"""
     )
 ])
 
 # Update the chart sections to include info icons
-def create_chart_section(title, chart_id, info_id, info_icon=True):
+def create_chart_section(title, chart_id, info_id, info_icon=True, additional_controls=None):
     """Helper function to create consistent chart sections with tooltips"""
     return html.Section([
         dbc.Row([
@@ -257,6 +266,7 @@ def create_chart_section(title, chart_id, info_id, info_icon=True):
                     html.H2(title, className="section-header"),
                     html.I(className="fas fa-info-circle ms-2", id=info_id) if info_icon else None,
                 ], className="d-flex align-items-center mb-3"),
+                additional_controls if additional_controls else None,
                 html.Div([
                     dcc.Graph(
                         id=chart_id,
@@ -279,6 +289,22 @@ app.layout = html.Div([
         create_chart_section("Ridership Trends", "overview-chart", "overview-chart-info"),
         create_chart_section("Mode Comparison", "mode-comparison-chart", "mode-comparison-info"),
         create_chart_section("Recovery Analysis", "recovery-heatmap", "recovery-heatmap-info"),
+        create_chart_section(
+            "Year-over-Year Comparison", 
+            "yearly-comparison-chart", 
+            "yearly-comparison-info",
+            additional_controls=html.Div([
+                html.Label("Select Mode for Comparison", className="mb-2"),
+                dcc.Dropdown(
+                    id='yearly-comparison-mode',
+                    options=[{'label': mode, 'value': mode} 
+                            for mode in mta_data.processed_data['Mode'].unique()],
+                    value='Subways',
+                    clearable=False,
+                    className="mb-4"
+                )
+            ])
+        ),
         
     ], fluid=True, className="px-4 py-3")
 ])
@@ -300,8 +326,11 @@ def update_charts(selected_modes, start_date, end_date):
         (mta_data.processed_data['Date'] <= end_date)
     ]
     
+    # Get timeline events
+    timeline_events = mta_data.timeline_events
+    
     # Generate figures
-    overview_fig = generate_overview_chart(filtered_data)
+    overview_fig = generate_overview_chart(filtered_data, timeline_events)
     comparison_fig = generate_mode_comparison_chart(filtered_data)
     recovery_fig = generate_recovery_heatmap(filtered_data)
     
@@ -411,6 +440,16 @@ def update_summary_stats(selected_modes, start_date, end_date):
         gauge_fig,
         rankings_data,
         rankings_columns
+    )
+
+@app.callback(
+    Output('yearly-comparison-chart', 'figure'),
+    Input('yearly-comparison-mode', 'value')
+)
+def update_yearly_comparison(selected_mode):
+    return generate_yearly_comparison_chart(
+        mta_data.processed_data,  # Use full dataset
+        selected_mode
     )
 
 if __name__ == '__main__':

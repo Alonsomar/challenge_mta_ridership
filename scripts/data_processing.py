@@ -19,6 +19,7 @@ class MTARidershipData:
         self.filepath = filepath
         self.raw_data = None
         self.processed_data = None
+        self.timeline_events = None
         
     def load_raw_data(self):
         """Load raw data from CSV file."""
@@ -90,6 +91,9 @@ class MTARidershipData:
             processed_df['Ridership_7day_MA'] = (processed_df.groupby('Mode')['Ridership']
                                                .transform(lambda x: x.rolling(7, min_periods=1).mean()))
             
+            # Add timeline events after processing
+            self.add_timeline_events()
+            
             self.processed_data = processed_df
             logger.info("Data processing completed successfully")
             return True
@@ -141,3 +145,75 @@ class MTARidershipData:
         
         anomalies = self.processed_data.groupby('Mode').apply(mark_anomalies)
         return self.processed_data[anomalies]
+    
+    def add_timeline_events(self):
+        """Add enhanced timeline events with detailed context and impact analysis"""
+        timeline_events = [
+            {
+                'date': '2020-03-01',
+                'event': 'First COVID-19 Case in NYC',
+                'category': 'health',
+                'impact_level': 'critical',
+                'description': 'First confirmed COVID-19 case in New York City',
+                'ridership_impact': 'immediate decline',
+                'phase': 'initial'
+            },
+            {
+                'date': '2020-03-22',
+                'event': 'NY PAUSE Program',
+                'category': 'policy',
+                'impact_level': 'critical',
+                'description': 'Governor Cuomo announces NY PAUSE',
+                'ridership_impact': 'severe decline',
+                'phase': 'lockdown'
+            },
+            {
+                'date': '2020-06-08',
+                'event': 'Phase 1 Reopening',
+                'category': 'policy',
+                'impact_level': 'major',
+                'description': 'NYC begins Phase 1 reopening',
+                'ridership_impact': 'gradual increase',
+                'phase': 'early_recovery'
+            },
+            {
+                'date': '2020-09-09',
+                'event': 'Indoor Dining Resumes',
+                'category': 'policy',
+                'impact_level': 'moderate',
+                'description': 'Indoor dining at 25% capacity',
+                'ridership_impact': 'moderate increase',
+                'phase': 'adaptation'
+            },
+            {
+                'date': '2020-12-14',
+                'event': 'First Vaccine in NYC',
+                'category': 'health',
+                'impact_level': 'major',
+                'description': 'First COVID-19 vaccine administered',
+                'ridership_impact': 'positive outlook',
+                'phase': 'recovery'
+            },
+            {
+                'date': '2021-05-19',
+                'event': 'Major Reopening',
+                'category': 'policy',
+                'impact_level': 'major',
+                'description': 'Most capacity restrictions lifted',
+                'ridership_impact': 'significant increase',
+                'phase': 'late_recovery'
+            },
+            {
+                'date': '2021-09-13',
+                'event': 'Schools Fully Reopen',
+                'category': 'policy',
+                'impact_level': 'major',
+                'description': 'NYC public schools fully reopen',
+                'ridership_impact': 'sustained increase',
+                'phase': 'new_normal'
+            }
+        ]
+        
+        self.timeline_events = pd.DataFrame(timeline_events)
+        self.timeline_events['date'] = pd.to_datetime(self.timeline_events['date'])
+        return self.timeline_events

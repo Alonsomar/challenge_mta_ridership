@@ -174,14 +174,15 @@ h2.text-primary {
 
 /* Fix chart container heights */
 .chart-container {
-    height: 450px;
+    height: 650px;
     width: 100%;
     position: relative;
-    margin-bottom: 2rem;
+    margin: 1rem 0;
     background: var(--card-bg);
     border-radius: 12px;
     box-shadow: var(--shadow-sm);
     padding: 1.5rem;
+    overflow: visible;
 }
 
 .js-plotly-plot {
@@ -211,7 +212,7 @@ h2.text-primary {
 
 /* Enhanced section spacing */
 section {
-    margin-bottom: 3rem;
+    margin: 2rem 0;
     padding: 1.5rem;
     background: var(--card-bg);
     border-radius: 12px;

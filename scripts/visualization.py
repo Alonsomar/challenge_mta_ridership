@@ -3,9 +3,10 @@
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-
-def generate_overview_chart(df):
-    """Generate overview line chart with options for daily, weekly, and bi-weekly smoothing"""
+from datetime import timedelta
+import pandas as pd
+def generate_overview_chart(df, timeline_events=None):
+    """Enhanced overview chart with improved timeline annotations and context"""
     # Calculate moving averages for each mode
     df_smooth_7 = df.copy()
     df_smooth_14 = df.copy()
@@ -43,7 +44,11 @@ def generate_overview_chart(df):
                 x=mode_data['Date'],
                 y=mode_data['Ridership'],
                 name=f"{mode} (Daily)",
-                line=dict(color=custom_colors[mode], width=1),
+                line=dict(
+                    color=custom_colors[mode],
+                    width=1,
+                    dash='solid'
+                ),
                 visible='legendonly'
             )
         )
@@ -69,91 +74,114 @@ def generate_overview_chart(df):
                 visible=False
             )
         )
-    
-    # Update layout
+
+    # Update layout without buttons, keeping right-side legend
     fig.update_layout(
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        title={
-            'text': 'Overall Ridership Trends',
-            'font': {'size': 24, 'color': '#2c3e50'},
-            'x': 0.02,
-            'y': 0.95
-        },
-        font={'color': '#2c3e50'},
+        showlegend=True,
         legend=dict(
-            bgcolor='rgba(255,255,255,0.8)',
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=1.05,  # Position legend to the right of the chart
+            bgcolor='rgba(255,255,255,0.9)',
             bordercolor='rgba(0,0,0,0.1)',
             borderwidth=1,
-            orientation="h",
-            yanchor="top",
-            y=-0.2,
-            xanchor="center",
-            x=0.5,
-            font=dict(size=10)
+            font=dict(size=11, family='Arial')
         ),
-        hovermode='x unified',
-        autosize=True,
-        height=450,
-        margin=dict(l=40, r=40, t=120, b=100),
-        xaxis=dict(
-            showgrid=True,
-            gridwidth=1,
-            gridcolor='rgba(0,0,0,0.1)',
-            title="Date"
-        ),
-        yaxis=dict(
-            showgrid=True,
-            gridwidth=1,
-            gridcolor='rgba(0,0,0,0.1)',
-            title="Ridership"
+        margin=dict(
+            l=60,
+            r=150,  # Right margin for legend
+            t=150,  # Increased top margin for staggered annotations
+            b=60
         )
     )
-    
-    # Update buttons position and styling
-    fig.update_layout(
-        updatemenus=[
-            dict(
-                type="buttons",
-                direction="right",
-                x=0.02,
-                y=1.15,  # Moved up
-                xanchor='left',
-                yanchor='top',
-                showactive=True,
-                buttons=list([
-                    dict(
-                        label="7-Day Average",
-                        method="update",
-                        args=[{"visible": [False, True, False] * len(df['Mode'].unique())},
-                              {"title": {"text": "Overall Ridership Trends (7-Day Average)",
-                                       "y": 0.95}}]  # Adjusted title position
-                    ),
-                    dict(
-                        label="14-Day Average",
-                        method="update",
-                        args=[{"visible": [False, False, True] * len(df['Mode'].unique())},
-                              {"title": {"text": "Overall Ridership Trends (14-Day Average)",
-                                       "y": 0.95}}]
-                    ),
-                    dict(
-                        label="Daily Values",
-                        method="update",
-                        args=[{"visible": [True, False, False] * len(df['Mode'].unique())},
-                              {"title": {"text": "Overall Ridership Trends (Daily Values)",
-                                       "y": 0.95}}]
-                    ),
-                ]),
-                pad={"r": 10, "t": 10, "b": 10, "l": 10},  # Added padding
-                bgcolor="white",
-                bordercolor="#dee2e6",
-                borderwidth=1,
-                active=0,  # Set first button as active by default
-                font={"size": 12, "color": "#2c3e50"}
+
+    # Enhanced timeline annotations with impact levels and phases
+    if timeline_events is not None:
+        annotations = []
+        
+        # Sort events chronologically
+        timeline_events = timeline_events.sort_values('date', ascending=True)
+        
+        # Enhanced color scheme for events
+        colors = {
+            'health': {
+                'critical': '#DC3545',
+                'major': '#DE6B48',
+                'moderate': '#E19578'
+            },
+            'policy': {
+                'critical': '#28A745',
+                'major': '#43AA8B',
+                'moderate': '#90BE6D'
+            }
+        }
+
+        # Phase markers
+        phase_positions = {
+            'initial': 0.45,
+            'lockdown': 0.50,
+            'early_recovery': 0.55,
+            'adaptation': 0.60,
+            'recovery': 0.65,
+            'late_recovery': 0.70,
+            'new_normal': 0.75
+        }
+
+        for i, (_, event) in enumerate(timeline_events.iterrows()):
+            color = colors[event['category']][event['impact_level']]
+            y_position = phase_positions[event['phase']]
+            
+            # Add vertical reference line
+            fig.add_shape(
+                type="line",
+                x0=event['date'],
+                x1=event['date'],
+                y0=0,
+                y1=y_position - 0.02,
+                yref="paper",
+                line=dict(
+                    color=color,
+                    width=1,
+                    dash="dot"
+                ),
+                opacity=0.6
             )
-        ]
-    )
-    
+            
+            # Add enhanced annotation with hover text
+            annotations.append(dict(
+                x=event['date'],
+                y=y_position,
+                xref='x',
+                yref='paper',
+                text=f"<b>{event['event']}</b>",
+                showarrow=True,
+                arrowhead=2,
+                arrowsize=1,
+                arrowwidth=1.5,
+                arrowcolor=color,
+                ax=0,
+                ay=-20,
+                bordercolor=color,
+                borderwidth=1,
+                borderpad=4,
+                bgcolor='rgba(255, 255, 255, 0.95)',
+                opacity=1,
+                font=dict(
+                    size=11,
+                    color='#2c3e50',
+                    family='Arial'
+                ),
+                hovertext=(
+                    f"<b><span style='font-size:14px;color:#2c3e50'>{event['description']}</span></b><br><br>"
+                    f"<span style='color:#1f77b4'><b>Impact:</b></span> {event['ridership_impact']}<br>"
+                    f"<span style='color:#2ca02c'><b>Phase:</b></span> {event['phase']}<br>" 
+                    f"<span style='color:#d62728'><b>Impact Level:</b></span> {event['impact_level']}"
+                )
+            ))
+
+        fig.update_layout(annotations=annotations)
+
     return fig
 
 def generate_mode_comparison_chart(df):
@@ -200,6 +228,244 @@ def generate_recovery_heatmap(df):
         autosize=True,
         height=400,
         margin=dict(l=40, r=40, t=60, b=40)
+    )
+    
+    return fig
+
+def generate_yearly_comparison_chart(df, selected_mode):
+    """Generate a year-over-year comparison chart for a selected mode."""
+    # Filter for selected mode
+    mode_data = df[df['Mode'] == selected_mode].copy()
+    
+    # Calculate 7-day moving average for the entire series first
+    mode_data['Smooth_Ridership'] = mode_data['Ridership'].rolling(
+        window=7, 
+        center=True,
+        min_periods=1
+    ).mean()
+    
+    # Create a date index with just month and day for all years
+    mode_data['month_day'] = pd.to_datetime(
+        '2000-' + mode_data['Date'].dt.strftime('%m-%d')
+    )
+    
+    # Create figure
+    fig = go.Figure()
+    
+    # Color scale for years (light to dark blue)
+    years = sorted(mode_data['Year'].unique())
+    n_years = len(years)
+    colors = [f'rgba(52, 89, 149, {0.3 + (i * 0.7/n_years)})' for i in range(n_years)]
+    
+    # Add a trace for each year
+    for year, color in zip(years, colors):
+        year_data = mode_data[mode_data['Year'] == year].copy()
+        year_data = year_data.sort_values('month_day')
+        
+        fig.add_trace(
+            go.Scatter(
+                x=year_data['month_day'],
+                y=year_data['Smooth_Ridership'],
+                name=str(year),
+                line=dict(
+                    color=color,
+                    width=3,
+                    shape='spline',  # Suaviza las líneas
+                ),
+                hovertemplate=(
+                    "<b>%{x|%B %d}</b><br>"
+                    "Ridership: %{y:,.0f}<br>"
+                    f"Year: {year}"
+                    "<extra></extra>"
+                )
+            )
+        )
+    
+    # Update layout
+    fig.update_layout(
+        title=dict(
+            text=f'{selected_mode} Ridership Patterns by Year',
+            font=dict(size=24, color='#2c3e50'),
+            x=0.5,
+            y=0.95
+        ),
+        xaxis_title='Month',
+        yaxis_title='Daily Ridership (7-day moving average)',
+        showlegend=True,
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=1.05,
+            bgcolor='rgba(255,255,255,0.8)',
+            bordercolor='rgba(0,0,0,0.1)',
+            borderwidth=1
+        ),
+        margin=dict(l=60, r=150, t=100, b=60),
+        xaxis=dict(
+            tickformat='%B',  # Nombre completo del mes
+            dtick='M1',
+            range=['2000-01-01', '2000-12-31'],
+            showgrid=True,
+            gridcolor='rgba(0,0,0,0.1)',
+            gridwidth=1,
+            tickfont=dict(size=12),
+            title_font=dict(size=14)
+        ),
+        yaxis=dict(
+            showgrid=True,
+            gridcolor='rgba(0,0,0,0.1)',
+            gridwidth=1,
+            tickformat=',d',  # Formato con separadores de miles
+            tickfont=dict(size=12),
+            title_font=dict(size=14)
+        ),
+        plot_bgcolor='white',
+        paper_bgcolor='white',
+        font=dict(family='Arial'),
+        hoverlabel=dict(
+            bgcolor='white',
+            font_size=14,
+            font_family='Arial'
+        )
+    )
+    
+    # Definir períodos estacionales
+    seasonal_periods = [
+        {
+            'name': 'New Year',
+            'start': '12-24',
+            'end': '01-02',
+            'color': 'rgba(169, 169, 169, 0.15)',
+            'text': 'New Year<br>Holiday Period',
+            'y_position': 0.95
+        },
+        {
+            'name': 'Independence Day',
+            'start': '07-01',
+            'end': '07-07',
+            'color': 'rgba(169, 169, 169, 0.15)',
+            'text': 'Independence Day<br>Week',
+            'y_position': 0.85
+        },
+        {
+            'name': 'Labor Day',
+            'start': '09-01',
+            'end': '09-07',
+            'color': 'rgba(169, 169, 169, 0.15)',
+            'text': 'Labor Day<br>Week',
+            'y_position': 0.75
+        },
+        {
+            'name': 'Memorial Day',
+            'start': '05-25',
+            'end': '05-31',
+            'color': 'rgba(169, 169, 169, 0.15)',
+            'text': 'Memorial Day<br>Week',
+            'y_position': 0.65
+        },
+        {
+            'name': 'Thanksgiving',
+            'start': '11-22',
+            'end': '11-28',
+            'color': 'rgba(169, 169, 169, 0.15)',
+            'text': 'Thanksgiving<br>Week',
+            'y_position': 0.55
+        }
+    ]
+    
+    # Agregar zonas sombreadas y anotaciones
+    shapes = []
+    annotations = []
+    
+    for period in seasonal_periods:
+        # Manejar el caso especial de Año Nuevo que cruza el cambio de año
+        if period['name'] == 'New Year':
+            # Agregar zona de fin de año
+            shapes.append(dict(
+                type="rect",
+                xref="x",
+                yref="paper",
+                x0=f"2000-{period['start']}",
+                x1=f"2000-12-31",
+                y0=0,
+                y1=1,
+                fillcolor=period['color'],
+                layer="below",
+                line_width=0,
+            ))
+            # Agregar zona de inicio de año
+            shapes.append(dict(
+                type="rect",
+                xref="x",
+                yref="paper",
+                x0=f"2000-01-01",
+                x1=f"2000-{period['end']}",
+                y0=0,
+                y1=1,
+                fillcolor=period['color'],
+                layer="below",
+                line_width=0,
+            ))
+        else:
+            shapes.append(dict(
+                type="rect",
+                xref="x",
+                yref="paper",
+                x0=f"2000-{period['start']}",
+                x1=f"2000-{period['end']}",
+                y0=0,
+                y1=1,
+                fillcolor=period['color'],
+                layer="below",
+                line_width=0,
+            ))
+        
+        # Agregar anotación
+        annotations.append(dict(
+            x=pd.to_datetime(f"2000-{period['start']}"),
+            y=period['y_position'],
+            xref="x",
+            yref="paper",
+            text=period['text'],
+            showarrow=True,
+            arrowhead=2,
+            arrowsize=1,
+            arrowwidth=1,
+            arrowcolor="#636363",
+            ax=0,
+            ay=-30,
+            font=dict(
+                size=10,
+                color='#636363'
+            ),
+            align="center",
+            bgcolor="rgba(255, 255, 255, 0.8)",
+            bordercolor="#636363",
+            borderwidth=1,
+            borderpad=4
+        ))
+    
+    # Actualizar el layout con las formas y anotaciones
+    fig.update_layout(
+        shapes=shapes + [
+            # Borde del gráfico (del código anterior)
+            dict(
+                type='rect',
+                xref='paper',
+                yref='paper',
+                x0=0,
+                y0=0,
+                x1=1,
+                y1=1,
+                line=dict(
+                    color='rgba(0,0,0,0.1)',
+                    width=1
+                ),
+                fillcolor='rgba(0,0,0,0)'
+            )
+        ],
+        annotations=annotations
     )
     
     return fig
