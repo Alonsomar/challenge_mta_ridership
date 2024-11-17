@@ -1,0 +1,250 @@
+:root {
+    --saffron: #eac435;
+    --yinmn-blue: #345995;
+    --razzmatazz: #e40066;
+    --mint: #03cea4;
+    --tomato: #fb4d3d;
+    --background: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-primary: #2c3e50;
+    --text-secondary: #6c757d;
+    --gradient-primary: linear-gradient(135deg, var(--yinmn-blue), #234985);
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--text-primary);
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar styling */
+.navbar {
+    background: var(--gradient-primary) !important;
+    box-shadow: var(--shadow-md);
+    padding: 0.5rem 1rem;
+}
+
+.navbar-brand {
+    font-size: 1.4rem;
+    font-weight: 500;
+}
+
+.nav-link {
+    position: relative;
+    transition: var(--transition);
+    border-radius: 4px;
+    margin: 0 0.2rem;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Section Padding for Scroll Targets */
+section[id] {
+    scroll-margin-top: 70px;
+}
+
+/* Cards styling */
+.card {
+    background-color: var(--card-bg);
+    border: none !important;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    border-radius: 12px;
+    height: 100%;
+    margin-bottom: 1rem;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Progress bars */
+.progress {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #f0f2f5;
+}
+
+.progress-bar {
+    background-color: var(--mint);
+}
+
+.progress-bar.bg-danger {
+    background-color: var(--tomato);
+}
+
+/* Text and headings */
+.text-primary {
+    color: var(--yinmn-blue) !important;
+}
+
+h2.text-primary {
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--saffron);
+    display: inline-block;
+}
+
+/* Filters section */
+.Select-control {
+    border: 2px solid var(--yinmn-blue);
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.Select-control:hover {
+    border-color: var(--mint);
+}
+
+/* Custom card accents */
+.border-primary {
+    border-top: 4px solid var(--yinmn-blue) !important;
+}
+
+.border-success {
+    border-top: 4px solid var(--mint) !important;
+}
+
+.border-info {
+    border-top: 4px solid var(--saffron) !important;
+}
+
+/* Icons */
+.fa-info-circle {
+    color: var(--razzmatazz);
+    opacity: 0.8;
+    transition: var(--transition);
+}
+
+.fa-info-circle:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Date picker customization */
+.DateInput {
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.DateInput_input {
+    border: 2px solid var(--yinmn-blue);
+}
+
+/* Chart customization */
+.js-plotly-plot {
+    background-color: var(--card-bg);
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* Add container constraints */
+.dash-container {
+    max-width: 100%;
+    padding: 2rem 3rem;
+    flex: 1 0 auto;
+}
+
+/* Fix chart container heights */
+.chart-container {
+    height: 450px;
+    width: 100%;
+    position: relative;
+    margin-bottom: 2rem;
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+}
+
+.js-plotly-plot {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+}
+
+/* Add this for the summary cards row */
+.summary-cards {
+    margin: 2rem 0 3rem 0;
+}
+
+/* Constrain the gauge chart height */
+#recovery-gauge {
+    height: 200px !important;
+}
+
+/* Add proper spacing for the data table */
+.dash-table-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Enhanced section spacing */
+section {
+    margin-bottom: 3rem;
+    padding: 1.5rem;
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Filters card specific styling */
+.filters-card {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+}
+
+.filters-card .card-title {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--saffron);
+}
+
+/* Section headers */
+.section-header {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--saffron);
+    color: var(--yinmn-blue);
+    font-weight: 600;
+}
+
+/* Dropdown and date picker refinements */
+.Select-control {
+    margin-bottom: 1.5rem;
+}
+
+.DateRangePickerInput {
+    margin-top: 0.5rem;
+}
