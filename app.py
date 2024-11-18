@@ -10,8 +10,11 @@ from scripts.data_processing import MTARidershipData
 from scripts.visualization import (
     generate_overview_chart,
     generate_mode_comparison_chart,
-    generate_recovery_heatmap,
-    generate_yearly_comparison_chart
+    generate_recovery_timeline,
+    generate_weekday_weekend_comparison,
+    generate_monthly_recovery_heatmap,
+    generate_yearly_comparison_chart,
+    filter_data
 )
 
 # Initialize and load data
@@ -257,6 +260,24 @@ tooltips = html.Div([
         • Year-over-year seasonal patterns
         • Recovery progression across years
         • Monthly ridership trends"""
+    ),
+    create_tooltip(
+        "recovery-timeline-info",
+        """Visualize recovery patterns over time:
+        • Shows recovery progression across different modes
+        • Helps identify recovery patterns post-pandemic"""
+    ),
+    create_tooltip(
+        "weekday-weekend-info",
+        """Compare ridership patterns between weekdays and weekends:
+        • Shows seasonal variations in ridership
+        • Helps identify peak vs. off-peak patterns"""
+    ),
+    create_tooltip(
+        "monthly-recovery-info",
+        """Visualize monthly recovery patterns:
+        • Shows recovery progression across different modes
+        • Helps identify seasonal variations in recovery"""
     )
 ])
 
@@ -292,7 +313,6 @@ app.layout = html.Div([
         
         create_chart_section("Ridership Trends", "overview-chart", "overview-chart-info"),
         create_chart_section("Mode Comparison", "mode-comparison-chart", "mode-comparison-info"),
-        create_chart_section("Recovery Analysis", "recovery-heatmap", "recovery-heatmap-info"),
         create_chart_section(
             "Year-over-Year Comparison", 
             "yearly-comparison-chart", 
@@ -310,14 +330,30 @@ app.layout = html.Div([
             ])
         ),
         
+        html.Div([
+            create_chart_section(
+                "Recovery Timeline Analysis", 
+                "recovery-timeline", 
+                "recovery-timeline-info"
+            ),
+            create_chart_section(
+                "Weekday vs Weekend Patterns", 
+                "weekday-weekend-comparison", 
+                "weekday-weekend-info"
+            ),
+            create_chart_section(
+                "Monthly Recovery Patterns", 
+                "monthly-recovery-heatmap", 
+                "monthly-recovery-info"
+            )
+        ], className="recovery-analysis-container")
     ], fluid=True, className="px-4 py-3")
 ])
 
 # Callbacks
 @app.callback(
     [Output('overview-chart', 'figure'),
-     Output('mode-comparison-chart', 'figure'),
-     Output('recovery-heatmap', 'figure')],
+     Output('mode-comparison-chart', 'figure')],
     [Input('mode-selector', 'value'),
      Input('date-range', 'start_date'),
      Input('date-range', 'end_date')]
@@ -336,9 +372,8 @@ def update_charts(selected_modes, start_date, end_date):
     # Generate figures
     overview_fig = generate_overview_chart(filtered_data, timeline_events)
     comparison_fig = generate_mode_comparison_chart(filtered_data)
-    recovery_fig = generate_recovery_heatmap(filtered_data)
     
-    return overview_fig, comparison_fig, recovery_fig
+    return overview_fig, comparison_fig
 
 @app.callback(
     [Output('total-ridership', 'children'),
@@ -454,6 +489,23 @@ def update_yearly_comparison(selected_mode):
     return generate_yearly_comparison_chart(
         mta_data.processed_data,  # Use full dataset
         selected_mode
+    )
+
+@app.callback(
+    [Output("recovery-timeline", "figure"),
+     Output("weekday-weekend-comparison", "figure"),
+     Output("monthly-recovery-heatmap", "figure")],
+    [Input("mode-selector", "value"),
+     Input("date-range", "start_date"),
+     Input("date-range", "end_date")]
+)
+def update_recovery_analysis(selected_modes, start_date, end_date):
+    filtered_data = filter_data(mta_data, selected_modes, start_date, end_date)
+    
+    return (
+        generate_recovery_timeline(filtered_data),
+        generate_weekday_weekend_comparison(filtered_data),
+        generate_monthly_recovery_heatmap(filtered_data)
     )
 
 if __name__ == '__main__':

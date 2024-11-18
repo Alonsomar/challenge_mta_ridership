@@ -204,30 +204,248 @@ def generate_mode_comparison_chart(df):
     
     return fig
 
-def generate_recovery_heatmap(df):
-    """Generate a heatmap showing recovery patterns."""
-    pivot_df = df.pivot_table(
+def generate_recovery_timeline(filtered_data):
+    """Generate the recovery timeline visualization"""
+    fig = go.Figure()
+    
+    # Custom colors (keep the same color dictionary)
+    colors = {
+        'Subways': '#345995',
+        'Buses': '#03cea4',
+        'LIRR': '#e40066',
+        'Metro-North': '#eac435',
+        'Access-A-Ride': '#fb4d3d',
+        'Bridges and Tunnels': '#234985',
+        'Staten Island Railway': '#02a87d'
+    }
+    
+    for mode in filtered_data['Mode'].unique():
+        mode_data = filtered_data[filtered_data['Mode'] == mode]
+        recovery_ma = mode_data.sort_values('Date').set_index('Date')['Recovery_Percentage'].rolling(30).mean()
+        
+        fig.add_trace(
+            go.Scatter(
+                x=recovery_ma.index,
+                y=recovery_ma * 100,
+                name=mode,
+                line=dict(color=colors[mode], width=2),
+                hovertemplate="<b>%{x}</b><br>" +
+                            f"{mode}<br>" +
+                            "Recovery: %{y:.1f}%<extra></extra>"
+            )
+        )
+    
+    fig.update_layout(
+        height=500,
+        title="Recovery Timeline: Different Paths to Normal",
+        showlegend=True,
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=1.05,
+            bgcolor='rgba(255,255,255,0.8)',
+            bordercolor='rgba(0,0,0,0.1)',
+            borderwidth=1
+        ),
+        template='plotly_white',
+        margin=dict(l=60, r=150, t=100, b=60)
+    )
+    
+    return fig
+
+def generate_weekday_weekend_comparison(filtered_data):
+    """Generate an enhanced weekday vs weekend violin plot with split violins"""
+    fig = go.Figure()
+    
+    # Base colors
+    base_colors = {
+        'Subways': '#345995',
+        'Buses': '#03cea4',
+        'LIRR': '#e40066',
+        'Metro-North': '#eac435',
+        'Access-A-Ride': '#fb4d3d',
+        'Bridges and Tunnels': '#234985',
+        'Staten Island Railway': '#02a87d'
+    }
+    
+    # Create lighter and darker versions of each color
+    colors = {
+        mode: {
+            'weekday': f'rgba{tuple(max(0, int(c * 255 - 25)) for c in rgb_to_rgba(color)[:3] + (0.6,))}',  # Más claro
+            'weekend': f'rgba{tuple(int(c * 255 + 25) for c in rgb_to_rgba(color)[:3] + (1,))}'      # Más oscuro
+        }
+        for mode, color in base_colors.items()
+    }
+    
+    for mode in filtered_data['Mode'].unique():
+        # Weekday violin
+        weekday_data = filtered_data[
+            (filtered_data['Mode'] == mode) & 
+            (filtered_data['IsWeekend'] == False)
+        ]['Recovery_Percentage'] * 100
+        
+        fig.add_trace(go.Violin(
+            x=[mode] * len(weekday_data),
+            y=weekday_data,
+            legendgroup='Weekday',
+            scalegroup=mode,
+            name='Weekday',
+            side='negative',
+            line_color=colors[mode]['weekday'],
+            meanline_visible=True,
+            showlegend=True if mode == list(filtered_data['Mode'].unique())[0] else False,
+            hovertemplate=(
+                f"<b>{mode}</b><br>" +
+                "Type: Weekday<br>" +
+                "Recovery: %{y:.1f}%<br>" +
+                f"Mean: {weekday_data.mean():.1f}%<extra></extra>"
+            )
+        ))
+        
+        # Weekend violin
+        weekend_data = filtered_data[
+            (filtered_data['Mode'] == mode) & 
+            (filtered_data['IsWeekend'] == True)
+        ]['Recovery_Percentage'] * 100
+        
+        fig.add_trace(go.Violin(
+            x=[mode] * len(weekend_data),
+            y=weekend_data,
+            legendgroup='Weekend',
+            scalegroup=mode,
+            name='Weekend',
+            side='positive',
+            line_color=colors[mode]['weekend'],
+            meanline_visible=True,
+            showlegend=True if mode == list(filtered_data['Mode'].unique())[0] else False,
+            hovertemplate=(
+                f"<b>{mode}</b><br>" +
+                "Type: Weekend<br>" +
+                "Recovery: %{y:.1f}%<br>" +
+                f"Mean: {weekend_data.mean():.1f}%<extra></extra>"
+            )
+        ))
+    
+    # Rest of the layout configuration remains the same
+    fig.update_layout(
+        height=600,
+        title=dict(
+            text="Weekday vs Weekend Recovery Patterns",
+            font=dict(size=24, color='#2c3e50'),
+            x=0.5,
+            y=0.95
+        ),
+        violingap=0,
+        violinmode='overlay',
+        template='plotly_white',
+        margin=dict(l=60, r=150, t=100, b=60),
+        xaxis=dict(
+            title_text="Transportation Mode",
+            title_font=dict(size=14),
+            tickangle=-45
+        ),
+        yaxis=dict(
+            title_text="Recovery Rate (%)",
+            gridcolor='rgba(0,0,0,0.1)',
+            zeroline=False,
+            title_font=dict(size=14)
+        ),
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=1.05,
+            bgcolor='rgba(255,255,255,0.8)',
+            bordercolor='rgba(0,0,0,0.1)',
+            borderwidth=1
+        ),
+        plot_bgcolor='white',
+        paper_bgcolor='white',
+        font=dict(family='Arial')
+    )
+    
+    return fig
+
+# Función auxiliar para convertir colores hex a rgba
+def rgb_to_rgba(hex_color):
+    """Convert hex color to rgba values"""
+    hex_color = hex_color.lstrip('#')
+    return tuple(int(hex_color[i:i+2], 16)/255 for i in (0, 2, 4))
+
+def generate_monthly_recovery_heatmap(filtered_data):
+    """Generate the monthly recovery heatmap with custom colormap"""
+    monthly_recovery = filtered_data.groupby(
+        ['Mode', 'Year', 'Month']
+    )['Recovery_Percentage'].mean().reset_index()
+    
+    heatmap_data = monthly_recovery.pivot_table(
         values='Recovery_Percentage',
-        index=df['Date'].dt.dayofweek,
-        columns='Mode',
+        index='Mode',
+        columns=['Year', 'Month'],
         aggfunc='mean'
     )
     
-    fig = px.imshow(
-        pivot_df,
-        title='Recovery Patterns by Day of Week',
-        labels=dict(
-            x='Mode of Transportation',
-            y='Day of Week',
-            color='% of Pre-Pandemic'
-        ),
-        aspect='auto'
-    )
+    # Custom colorscale using app's color palette
+    colorscale = [
+        [0, '#fb4d3d'],      # Rojo para valores bajos (del Access-A-Ride)
+        [0.3, '#eac435'],    # Amarillo (del Metro-North)
+        [0.6, '#03cea4'],    # Verde azulado (del Buses)
+        [0.8, '#345995'],    # Azul (del Subways)
+        [1, '#234985']       # Azul oscuro (del Bridges and Tunnels)
+    ]
+    
+    fig = go.Figure(data=[
+        go.Heatmap(
+            z=heatmap_data.values * 100,
+            x=[f"{year}-{month:02d}" for year, month in heatmap_data.columns],
+            y=heatmap_data.index,
+            colorscale=colorscale,
+            zmin=0,
+            zmax=100,
+            showscale=True,
+            colorbar=dict(
+                title="Recovery %",
+                titleside="right",
+                thickness=15,
+                outlinewidth=1,
+                outlinecolor='rgba(0,0,0,0.1)',
+                len=0.9,
+                tickfont=dict(size=12),
+                titlefont=dict(size=14)
+            ),
+            hovertemplate="<b>%{y}</b><br>" +
+                        "Date: %{x}<br>" +
+                        "Recovery: %{z:.1f}%<extra></extra>"
+        )
+    ])
     
     fig.update_layout(
-        autosize=True,
-        height=400,
-        margin=dict(l=40, r=40, t=60, b=40)
+        height=500,
+        title=dict(
+            text="Monthly Recovery Evolution",
+            font=dict(size=24, color='#2c3e50'),
+            x=0.5,
+            y=0.95
+        ),
+        template='plotly_white',
+        margin=dict(l=60, r=150, t=100, b=60),
+        xaxis=dict(
+            title_text="Month-Year",
+            title_font=dict(size=14),
+            tickangle=-45,
+            gridcolor='rgba(0,0,0,0.1)',
+            type='category'
+        ),
+        yaxis=dict(
+            title_text="Transportation Mode",
+            title_font=dict(size=14),
+            gridcolor='rgba(0,0,0,0.1)',
+            type='category'
+        ),
+        plot_bgcolor='white',
+        paper_bgcolor='white',
+        font=dict(family='Arial')
     )
     
     return fig
@@ -469,3 +687,11 @@ def generate_yearly_comparison_chart(df, selected_mode):
     )
     
     return fig
+
+def filter_data(mta_data, selected_modes, start_date, end_date):
+    """Filter MTA data based on selected modes and date range"""
+    return mta_data.processed_data[
+        (mta_data.processed_data['Mode'].isin(selected_modes)) &
+        (mta_data.processed_data['Date'] >= start_date) &
+        (mta_data.processed_data['Date'] <= end_date)
+    ]

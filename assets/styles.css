@@ -214,7 +214,7 @@ h2.text-primary {
 
 /* Fix chart container heights and make graphs transparent */
 .chart-container {
-    height: 650px;
+    height: 800px;
     width: 100%;
     position: relative;
     margin: 1rem 0;
