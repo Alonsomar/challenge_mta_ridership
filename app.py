@@ -46,8 +46,12 @@ app = dash.Dash(
         dbc.themes.FLATLY,
         'https://use.fontawesome.com/releases/v5.15.4/css/all.css'
     ],
+    external_scripts=[
+        'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js'
+    ],
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}]
 )
+
 
 # Navigation bar
 navbar = dbc.NavbarSimple(

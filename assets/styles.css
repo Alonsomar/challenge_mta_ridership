@@ -8,10 +8,17 @@
     --card-bg: #ffffff;
     --text-primary: #2c3e50;
     --text-secondary: #6c757d;
-    --gradient-primary: linear-gradient(135deg, var(--yinmn-blue), #234985);
+    --gradient-primary: linear-gradient(135deg, #2c3e50, #3498db);
+    --gradient-accent: linear-gradient(135deg, var(--mint), var(--saffron));
+    --gradient-dark: linear-gradient(135deg, #2c3e50, #34495e);
     --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
     --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
     --transition: all 0.3s ease;
+    --glass-bg: rgba(255, 255, 255, 0.25);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    --card-blur: 4px;
+    --section-blur: 4x;
 }
 
 html, body {
@@ -21,7 +28,10 @@ html, body {
 }
 
 body {
-    background-color: var(--background);
+    background: linear-gradient(135deg, 
+        rgba(245, 247, 250, 0.27), 
+        rgba(235, 240, 245, 0.25),
+        rgba(225, 235, 245, 0.28));
     color: var(--text-primary);
     padding-top: 60px;
     display: flex;
@@ -30,9 +40,13 @@ body {
 
 /* Navbar styling */
 .navbar {
-    background: var(--gradient-primary) !important;
-    box-shadow: var(--shadow-md);
+    background: rgba(44, 62, 80, 0.75) !important;
+    backdrop-filter: blur(var(--card-blur));
+    -webkit-backdrop-filter: blur(var(--card-blur));
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
     padding: 0.5rem 1rem;
+    background-color: rgba(44, 62, 80, 0.85) !important;
 }
 
 .navbar-brand {
@@ -42,13 +56,26 @@ body {
 
 .nav-link {
     position: relative;
-    transition: var(--transition);
-    border-radius: 4px;
+    padding: 0.5rem 1rem;
     margin: 0 0.2rem;
+    color: rgba(255, 255, 255, 0.8) !important;
+    transition: all 0.3s ease;
 }
 
-.nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--gradient-accent);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+    width: 100%;
 }
 
 .nav-link.active {
@@ -67,25 +94,32 @@ section[id] {
 
 /* Cards styling */
 .card {
-    background-color: var(--card-bg);
-    border: none !important;
-    box-shadow: var(--shadow-sm);
-    transition: var(--transition);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--card-blur));
+    -webkit-backdrop-filter: blur(var(--card-blur));
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    transition: all 0.3s ease;
     border-radius: 12px;
     height: 100%;
     margin-bottom: 1rem;
+    animation: fadeInUp 0.6s ease-out;
+    animation-fill-mode: both;
 }
 
 .card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 15px 45px rgba(31, 38, 135, 0.2);
 }
 
 /* Progress bars */
 .progress {
     height: 8px;
     border-radius: 4px;
-    background-color: #f0f2f5;
+    background-color: rgba(240, 242, 245, 0.3);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
 .progress-bar {
@@ -99,6 +133,7 @@ section[id] {
 /* Text and headings */
 .text-primary {
     color: var(--yinmn-blue) !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
 h2.text-primary {
@@ -107,17 +142,22 @@ h2.text-primary {
     padding-bottom: 0.5rem;
     border-bottom: 3px solid var(--saffron);
     display: inline-block;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.15);
 }
 
 /* Filters section */
 .Select-control {
-    border: 2px solid var(--yinmn-blue);
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(var(--section-blur));
+    -webkit-backdrop-filter: blur(var(--section-blur));
+    border: 1px solid var(--glass-border) !important;
+    transition: all 0.3s ease;
     border-radius: 8px;
-    transition: var(--transition);
 }
 
 .Select-control:hover {
-    border-color: var(--mint);
+    background: rgba(255, 255, 255, 0.35) !important;
+    border-color: var(--mint) !important;
 }
 
 /* Custom card accents */
@@ -172,17 +212,21 @@ h2.text-primary {
     flex: 1 0 auto;
 }
 
-/* Fix chart container heights */
+/* Fix chart container heights and make graphs transparent */
 .chart-container {
     height: 650px;
     width: 100%;
     position: relative;
     margin: 1rem 0;
-    background: var(--card-bg);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--section-blur));
+    -webkit-backdrop-filter: blur(var(--section-blur));
     border-radius: 12px;
-    box-shadow: var(--shadow-sm);
-    padding: 1.5rem;
+    box-shadow: var(--glass-shadow);
+    padding: 2rem;
     overflow: visible;
+    transition: all 0.3s ease;
+    border: 1px solid var(--glass-border);
 }
 
 .js-plotly-plot {
@@ -191,7 +235,22 @@ h2.text-primary {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: transparent;
+    background-color: transparent !important;
+}
+
+/* Make sure the plot container is also transparent */
+.plot-container.plotly {
+    background: transparent !important;
+}
+
+/* Ensure the paper bg is transparent too */
+.js-plotly-plot .plotly .main-svg {
+    background: transparent !important;
+}
+
+.chart-container:hover {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.2);
 }
 
 /* Add this for the summary cards row */
@@ -214,9 +273,13 @@ h2.text-primary {
 section {
     margin: 2rem 0;
     padding: 1.5rem;
-    background: var(--card-bg);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--section-blur));
+    -webkit-backdrop-filter: blur(var(--section-blur));
     border-radius: 12px;
     box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    border: 1px solid var(--glass-border);
 }
 
 /* Filters card specific styling */
@@ -248,4 +311,47 @@ section {
 
 .DateRangePickerInput {
     margin-top: 0.5rem;
+}
+
+/* Animaciones de entrada para las cards */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+/* Aplicar delays escalonados a las cards */
+.summary-cards .card:nth-child(1) { animation-delay: 0.1s; }
+.summary-cards .card:nth-child(2) { animation-delay: 0.2s; }
+.summary-cards .card:nth-child(3) { animation-delay: 0.3s; }
+
+/* Mejorar los dropdowns */
+.Select-control {
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: var(--glass-shadow);
+    transition: all 0.3s ease;
+}
+
+.Select-control:hover {
+    border-color: var(--mint) !important;
+    box-shadow: 0 0 0 3px rgba(3, 206, 164, 0.1);
+}
+
+/* Asegurar que los tooltips sean legibles */
+.tooltip {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
 }
