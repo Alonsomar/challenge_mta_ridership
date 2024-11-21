@@ -355,3 +355,28 @@ section {
     border: 1px solid var(--glass-border);
     box-shadow: var(--glass-shadow);
 }
+
+
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 250px;
+    background-color: #f8f9fa;
+    padding: 2rem 1rem;
+    box-shadow: var(--glass-shadow);
+    z-index: 2;
+}
+
+.sidebar-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.sidebar .nav-link {
+    margin-bottom: 1rem;
+}
