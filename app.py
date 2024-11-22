@@ -17,6 +17,9 @@ from scripts.visualization import (
     filter_data
 )
 
+# Import the sidebar component and styles
+from components.sidebar import sidebar, SIDEBAR_STYLE, SIDEBAR_HIDDEN
+
 # Initialize and load data
 mta_data = MTARidershipData('data/MTA_Daily_Ridership.csv')
 mta_data.load_raw_data()
@@ -55,35 +58,6 @@ app = dash.Dash(
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}]
 )
 
-
-# Navigation bar
-navbar = dbc.NavbarSimple(
-    brand=html.Div([
-        html.I(className="fas fa-subway me-2"),
-        "MTA Ridership Dashboard"
-    ], className="d-flex align-items-center"),
-    brand_href="#",
-    color="primary",
-    dark=True,
-    fixed="top",
-    className="py-2",
-    children=[
-        dbc.Nav([
-            dbc.NavItem(dbc.NavLink([
-                html.I(className="fas fa-chart-line me-1"),
-                "Overview"
-            ], href="#section-1", className="px-3")),
-            dbc.NavItem(dbc.NavLink([
-                html.I(className="fas fa-exchange-alt me-1"),
-                "Mode Comparison"
-            ], href="#section-2", className="px-3")),
-            dbc.NavItem(dbc.NavLink([
-                html.I(className="fas fa-chart-area me-1"),
-                "Recovery Trends"
-            ], href="#section-3", className="px-3")),
-        ], className="ms-auto", navbar=True)
-    ]
-)
 
 # Filters and controls
 controls = dbc.Card([
@@ -302,53 +276,118 @@ def create_chart_section(title, chart_id, info_id, info_icon=True, additional_co
         ], className="mb-4")
     ], id=f"section-{chart_id}")
 
-# Layout
+# Layout actualizado
 app.layout = html.Div([
-    navbar,
-    tooltips,
-    dbc.Container([
-        html.Div(style={'height': '70px'}),
-        dbc.Row([dbc.Col([controls], md=12)], className="mb-4"),
-        dbc.Row([dbc.Col([summary_cards], md=12)], className="summary-cards"),
-        
-        create_chart_section("Ridership Trends", "overview-chart", "overview-chart-info"),
-        create_chart_section("Mode Comparison", "mode-comparison-chart", "mode-comparison-info"),
-        create_chart_section(
-            "Year-over-Year Comparison", 
-            "yearly-comparison-chart", 
-            "yearly-comparison-info",
-            additional_controls=html.Div([
-                html.Label("Select Mode for Comparison", className="mb-2"),
-                dcc.Dropdown(
-                    id='yearly-comparison-mode',
-                    options=[{'label': mode, 'value': mode} 
-                            for mode in mta_data.processed_data['Mode'].unique()],
-                    value='Subways',
-                    clearable=False,
-                    className="mb-4"
-                )
-            ])
-        ),
-        
+    # Barra superior con toggle y enlaces
+    html.Div([
+        # Lado izquierdo con toggle y título
         html.Div([
-            create_chart_section(
-                "Recovery Timeline Analysis", 
-                "recovery-timeline", 
-                "recovery-timeline-info"
+            dbc.Button(
+                html.I(className="fas fa-bars"),
+                id="btn_sidebar",
+                n_clicks=0,
             ),
-            create_chart_section(
-                "Weekday vs Weekend Patterns", 
-                "weekday-weekend-comparison", 
-                "weekday-weekend-info"
+            html.H1([
+                html.I(className="fas fa-subway me-2", 
+                      style={"color": "var(--saffron)"}),
+                "MTA Dashboard"
+            ], className="top-bar-title"),
+        ], className="top-bar-left"),
+        
+        # Lado derecho con enlaces
+        html.Div([
+            html.A(
+                html.I(className="fas fa-globe"),
+                href="https://alonsovaldes.com",
+                target="_blank",
+                className="top-bar-link",
+                title="Visit Alonso's Website"
             ),
-            create_chart_section(
-                "Monthly Recovery Patterns", 
-                "monthly-recovery-heatmap", 
-                "monthly-recovery-info"
-            )
-        ], className="recovery-analysis-container")
-    ], fluid=True, className="px-4 py-3")
+            html.A(
+                html.I(className="fab fa-github"),
+                href="https://github.com/Alonsomar/challenge_mta_ridership",
+                target="_blank",
+                className="top-bar-link",
+                title="View on GitHub"
+            ),
+        ], className="top-bar-right"),
+    ], className="top-bar"),
+    
+    # Sidebar sin el toggle
+    sidebar,
+    
+    # Contenido principal
+    html.Div(
+        [
+            tooltips,
+            dbc.Container([
+                dbc.Row([dbc.Col([controls], md=12)], className="mb-4"),
+                dbc.Row([dbc.Col([summary_cards], md=12)], className="summary-cards"),
+                create_chart_section("Ridership Trends", "overview-chart", "overview-chart-info"),
+                create_chart_section("Mode Comparison", "mode-comparison-chart", "mode-comparison-info"),
+                create_chart_section(
+                    "Year-over-Year Comparison", 
+                    "yearly-comparison-chart", 
+                    "yearly-comparison-info",
+                    additional_controls=html.Div([
+                        html.Label("Select Mode for Comparison", className="mb-2"),
+                        dcc.Dropdown(
+                            id='yearly-comparison-mode',
+                            options=[{'label': mode, 'value': mode} 
+                                    for mode in mta_data.processed_data['Mode'].unique()],
+                            value='Subways',
+                            clearable=False,
+                            className="mb-4"
+                        )
+                    ])
+                ),
+                html.Div([
+                    create_chart_section(
+                        "Recovery Timeline Analysis", 
+                        "recovery-timeline", 
+                        "recovery-timeline-info"
+                    ),
+                    create_chart_section(
+                        "Weekday vs Weekend Patterns", 
+                        "weekday-weekend-comparison", 
+                        "weekday-weekend-info"
+                    ),
+                    create_chart_section(
+                        "Monthly Recovery Patterns", 
+                        "monthly-recovery-heatmap", 
+                        "monthly-recovery-info"
+                    )
+                ], className="recovery-analysis-container")
+            ], fluid=True)
+        ],
+        id="page-content",
+        style={
+            "marginTop": "60px",  # Ajustar para la barra superior
+            "marginLeft": "16rem",  # Ajustar al ancho del sidebar
+            "transition": "all 0.2s"
+        }
+    )
 ])
+
+
+# Callback to toggle the sidebar
+@app.callback(
+    [Output("sidebar", "style"), Output("page-content", "style")],
+    [Input("btn_sidebar", "n_clicks")],
+    [State("sidebar", "style"), State("page-content", "style")]
+)
+def toggle_sidebar(n_clicks, sidebar_style, content_style):
+    """Toggle the sidebar visibility and adjust the page content margin."""
+    if n_clicks and n_clicks % 2 == 1:
+        # Hide sidebar
+        sidebar_style = SIDEBAR_HIDDEN
+        content_style = {**content_style, "margin-left": "0rem"}
+    else:
+        # Show sidebar
+        sidebar_style = SIDEBAR_STYLE
+        content_style = {**content_style, "margin-left": "16rem"}
+    return sidebar_style, content_style
+
 
 # Callbacks
 @app.callback(

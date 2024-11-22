@@ -380,3 +380,254 @@ section {
 .sidebar .nav-link {
     margin-bottom: 1rem;
 }
+
+
+
+/* Estilos para los enlaces del sidebar */
+#sidebar .nav-link {
+    color: #2c3e50;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+}
+
+#sidebar .nav-link:hover {
+    background-color: #eac435; /* Color secundario */
+    color: #fff;
+}
+
+#sidebar .nav-link.active {
+    background-color: #345995; /* Color primario */
+    color: #fff;
+}
+
+/* Estilos para el botón de toggle */
+#btn_sidebar {
+    background-color: #eac435;
+    color: #fff;
+    border: none;
+}
+
+#btn_sidebar:hover {
+    background-color: #d4a72c;
+}
+
+/* Estilos para mejorar el aspecto de los componentes */
+.card-title {
+    color: #345995;
+}
+
+.section-header {
+    color: #345995;
+}
+
+/* Ajustes para los gráficos */
+.chart-container {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Sidebar specific styles */
+#sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+#sidebar .nav-link:hover {
+    background-color: rgba(234, 196, 53, 0.15);
+    color: white;
+    transform: translateX(5px);
+}
+
+#sidebar .nav-link.active {
+    background-color: var(--saffron);
+    color: var(--text-primary);
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#sidebar .nav-link i {
+    width: 20px;
+    text-align: center;
+    margin-right: 8px;
+    opacity: 0.9;
+}
+
+#sidebar .nav-link:hover i {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Smooth transition for active state */
+#sidebar .nav-link.active {
+    position: relative;
+    overflow: hidden;
+}
+
+#sidebar .nav-link.active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        45deg,
+        rgba(255,255,255,0.1),
+        rgba(255,255,255,0.2)
+    );
+    transform: translateX(-100%);
+    animation: shine 1s forwards;
+}
+
+@keyframes shine {
+    to {
+        transform: translateX(100%);
+    }
+}
+
+/* Estilos mejorados para la barra superior */
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(90deg, #345995, #2c3e50);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    z-index: 1100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Mejorar el botón de toggle */
+#btn_sidebar {
+    background: transparent;
+    border: 1px solid var(--saffron);
+    color: var(--saffron);
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+#btn_sidebar:hover {
+    background: var(--saffron);
+    color: var(--text-primary);
+    transform: rotate(90deg);
+}
+
+/* Mejorar el título */
+.top-bar-title {
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--saffron);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    letter-spacing: 0.5px;
+}
+
+/* Mejorar la sección derecha */
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-right: 1rem;
+    position: relative;
+}
+
+/* Mejorar los enlaces */
+.top-bar-link {
+    color: var(--saffron);
+    opacity: 0.85;
+    transition: all 0.3s ease;
+    padding: 0.7rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid transparent;
+    text-decoration: none;
+}
+
+.top-bar-link:hover {
+    opacity: 1;
+    color: white;
+    transform: translateY(-2px);
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--saffron);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.top-bar-link i {
+    font-size: 1.25rem;
+    transition: transform 0.3s ease;
+}
+
+.top-bar-link:hover i {
+    transform: scale(1.1);
+}
+
+/* Añadir separador sutil entre los enlaces */
+.top-bar-right::before {
+    content: '';
+    position: absolute;
+    left: -1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 24px;
+    width: 1px;
+    background: linear-gradient(
+        to bottom,
+        transparent,
+        var(--saffron),
+        transparent
+    );
+    opacity: 0.3;
+}
+
+/* Añadir tooltips personalizados */
+.top-bar-link::after {
+    content: attr(title);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.top-bar-link:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(4px);
+}
