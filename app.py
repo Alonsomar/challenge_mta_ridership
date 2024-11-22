@@ -278,6 +278,7 @@ def create_chart_section(title, chart_id, info_id, info_icon=True, additional_co
 
 # Layout actualizado
 app.layout = html.Div([
+    dcc.Location(id='url'),
     # Barra superior con toggle y enlaces
     html.Div([
         # Lado izquierdo con toggle y título
@@ -546,6 +547,22 @@ def update_recovery_analysis(selected_modes, start_date, end_date):
         generate_weekday_weekend_comparison(filtered_data),
         generate_monthly_recovery_heatmap(filtered_data)
     )
+
+app.clientside_callback(
+    """
+    function(url) {
+        if (url && url.includes('#')) {
+            var element_id = url.split('#')[1];
+            var element = document.getElementById(element_id);
+            if (element) {
+                element.scrollIntoView({behavior: 'smooth', block: 'start'});
+            }
+        }
+    }
+    """,
+    Output('url', 'pathname'),  # Este Output no se usará realmente
+    Input('url', 'href')
+)
 
 if __name__ == '__main__':
     app.run_server(debug=True)

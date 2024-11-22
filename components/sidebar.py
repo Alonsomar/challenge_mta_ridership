@@ -42,27 +42,27 @@ sidebar = html.Div(
                 dbc.NavLink([
                     html.I(className="fas fa-chart-line me-2"),
                     "Ridership Trends"
-                ], href="#section-overview-chart", id="link-overview", active="exact"),
+                ], href="/#section-overview-chart", id="link-overview", active="exact"),
                 dbc.NavLink([
                     html.I(className="fas fa-exchange-alt me-2"),
                     "Mode Comparison"
-                ], href="#section-mode-comparison-chart", id="link-mode-comparison", active="exact"),
+                ], href="/#section-mode-comparison-chart", id="link-mode-comparison", active="exact"),
                 dbc.NavLink([
                     html.I(className="fas fa-chart-area me-2"),
                     "Year-over-Year"
-                ], href="#section-yearly-comparison-chart", id="link-yearly-comparison", active="exact"),
+                ], href="/#section-yearly-comparison-chart", id="link-yearly-comparison", active="exact"),
                 dbc.NavLink([
                     html.I(className="fas fa-chart-line me-2"),
                     "Recovery Timeline"
-                ], href="#section-recovery-timeline", id="link-recovery-timeline", active="exact"),
+                ], href="/#section-recovery-timeline", id="link-recovery-timeline", active="exact"),
                 dbc.NavLink([
                     html.I(className="fas fa-calendar-alt me-2"),
                     "Weekday vs Weekend"
-                ], href="#section-weekday-weekend-comparison", id="link-weekday-weekend", active="exact"),
+                ], href="/#section-weekday-weekend-comparison", id="link-weekday-weekend", active="exact"),
                 dbc.NavLink([
                     html.I(className="fas fa-th me-2"),
                     "Monthly Patterns"
-                ], href="#section-monthly-recovery-heatmap", id="link-monthly-recovery", active="exact"),
+                ], href="/#section-monthly-recovery-heatmap", id="link-monthly-recovery", active="exact"),
             ],
             vertical=True,
             pills=True,
