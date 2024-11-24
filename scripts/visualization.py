@@ -688,10 +688,8 @@ def generate_yearly_comparison_chart(df, selected_mode):
     
     return fig
 
-def filter_data(mta_data, selected_modes, start_date, end_date):
-    """Filter MTA data based on selected modes and date range"""
+def filter_data(mta_data, selected_modes):
+    """Filter MTA data based on selected modes"""
     return mta_data.processed_data[
-        (mta_data.processed_data['Mode'].isin(selected_modes)) &
-        (mta_data.processed_data['Date'] >= start_date) &
-        (mta_data.processed_data['Date'] <= end_date)
+        mta_data.processed_data['Mode'].isin(selected_modes)
     ]

@@ -58,6 +58,7 @@ app = dash.Dash(
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}]
 )
 
+app.title = "MTA Challenge"
 
 # Filters and controls
 controls = dbc.Card([
@@ -70,26 +71,41 @@ controls = dbc.Card([
             ], className="d-flex align-items-center mb-2"),
             dcc.Dropdown(
                 id='mode-selector',
-                options=[{'label': mode, 'value': mode} 
-                        for mode in mta_data.processed_data['Mode'].unique()],
-                value=mta_data.processed_data['Mode'].unique().tolist(),
-                multi=True
+                options=[
+                    {'label': html.Div([
+                        html.I(className="fas fa-subway me-2"),
+                        "Subways"
+                    ], style={'display': 'flex', 'alignItems': 'center'}), 'value': 'Subways'},
+                    {'label': html.Div([
+                        html.I(className="fas fa-bus me-2"),
+                        "Buses"
+                    ], style={'display': 'flex', 'alignItems': 'center'}), 'value': 'Buses'},
+                    {'label': html.Div([
+                        html.I(className="fas fa-train me-2"),
+                        "LIRR"
+                    ], style={'display': 'flex', 'alignItems': 'center'}), 'value': 'LIRR'},
+                    {'label': html.Div([
+                        html.I(className="fas fa-train me-2"),
+                        "Metro-North"
+                    ], style={'display': 'flex', 'alignItems': 'center'}), 'value': 'Metro-North'},
+                    {'label': html.Div([
+                        html.I(className="fas fa-wheelchair me-2"),
+                        "Access-A-Ride"
+                    ], style={'display': 'flex', 'alignItems': 'center'}), 'value': 'Access-A-Ride'},
+                    {'label': html.Div([
+                        html.I(className="fas fa-road me-2"),
+                        "Bridges and Tunnels"
+                    ], style={'display': 'flex', 'alignItems': 'center'}), 'value': 'Bridges and Tunnels'},
+                    {'label': html.Div([
+                        html.I(className="fas fa-subway me-2"),
+                        "Staten Island Railway"
+                    ], style={'display': 'flex', 'alignItems': 'center'}), 'value': 'Staten Island Railway'}
+                ],
+                value=['Subways', 'Buses', 'LIRR', 'Metro-North', 'Access-A-Ride', 'Bridges and Tunnels', 'Staten Island Railway'],
+                multi=True,
+                className="mode-selector-dropdown"
             ),
         ], className="mb-4"),
-        html.Div([
-            html.Div([
-                html.Label("Date Range", className="mb-2"),
-                html.I(className="fas fa-info-circle ms-2", id="date-range-info"),
-            ], className="d-flex align-items-center mb-2"),
-            dcc.DatePickerRange(
-                id='date-range',
-                min_date_allowed=mta_data.processed_data['Date'].min(),
-                max_date_allowed=mta_data.processed_data['Date'].max(),
-                start_date=mta_data.processed_data['Date'].min(),
-                end_date=mta_data.processed_data['Date'].max(),
-                display_format='YYYY-MM-DD'
-            ),
-        ]),
     ])
 ], className="filters-card shadow-sm")
 
@@ -195,12 +211,6 @@ tooltips = html.Div([
         • Metro-North: Ticket sales data
         • Access-A-Ride: Scheduled trips
         • Bridges and Tunnels: Toll collection data"""
-    ),
-    create_tooltip(
-        "date-range-info",
-        """Select a date range to analyze ridership patterns. 
-        Data available from March 2020 onwards. 
-        Comparing longer periods helps identify seasonal patterns and long-term trends."""
     ),
     
     # New tooltips for charts
@@ -394,16 +404,12 @@ def toggle_sidebar(n_clicks, sidebar_style, content_style):
 @app.callback(
     [Output('overview-chart', 'figure'),
      Output('mode-comparison-chart', 'figure')],
-    [Input('mode-selector', 'value'),
-     Input('date-range', 'start_date'),
-     Input('date-range', 'end_date')]
+    [Input('mode-selector', 'value')]
 )
-def update_charts(selected_modes, start_date, end_date):
+def update_charts(selected_modes):
     # Filter data based on selections
     filtered_data = mta_data.processed_data[
-        (mta_data.processed_data['Mode'].isin(selected_modes)) &
-        (mta_data.processed_data['Date'] >= start_date) &
-        (mta_data.processed_data['Date'] <= end_date)
+        mta_data.processed_data['Mode'].isin(selected_modes)
     ]
     
     # Get timeline events
@@ -423,15 +429,11 @@ def update_charts(selected_modes, start_date, end_date):
      Output('recovery-gauge', 'figure'),
      Output('mode-rankings', 'data'),
      Output('mode-rankings', 'columns')],
-    [Input('mode-selector', 'value'),
-     Input('date-range', 'start_date'),
-     Input('date-range', 'end_date')]
+    [Input('mode-selector', 'value')]
 )
-def update_summary_stats(selected_modes, start_date, end_date):
+def update_summary_stats(selected_modes):
     filtered_data = mta_data.processed_data[
-        (mta_data.processed_data['Mode'].isin(selected_modes)) &
-        (mta_data.processed_data['Date'] >= start_date) &
-        (mta_data.processed_data['Date'] <= end_date)
+        mta_data.processed_data['Mode'].isin(selected_modes)
     ]
     
     # Enhanced total ridership calculation
@@ -439,7 +441,8 @@ def update_summary_stats(selected_modes, start_date, end_date):
     formatted_ridership = f"{total_ridership:,.0f}"
     
     # Improved trend calculation using rolling averages
-    end_date_dt = pd.to_datetime(end_date)
+    end_date_dt = filtered_data['Date'].max()
+    
     current_period = filtered_data[
         filtered_data['Date'] >= (end_date_dt - timedelta(days=30))
     ]['Ridership'].mean()
@@ -535,12 +538,10 @@ def update_yearly_comparison(selected_mode):
     [Output("recovery-timeline", "figure"),
      Output("weekday-weekend-comparison", "figure"),
      Output("monthly-recovery-heatmap", "figure")],
-    [Input("mode-selector", "value"),
-     Input("date-range", "start_date"),
-     Input("date-range", "end_date")]
+    [Input("mode-selector", "value")]
 )
-def update_recovery_analysis(selected_modes, start_date, end_date):
-    filtered_data = filter_data(mta_data, selected_modes, start_date, end_date)
+def update_recovery_analysis(selected_modes):
+    filtered_data = filter_data(mta_data, selected_modes)
     
     return (
         generate_recovery_timeline(filtered_data),

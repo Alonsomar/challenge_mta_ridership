@@ -631,3 +631,65 @@ section {
     visibility: visible;
     transform: translateX(-50%) translateY(4px);
 }
+
+/* Mode selector dropdown styling - Enhanced readability */
+.mode-selector-dropdown .Select-menu-outer {
+    background: white !important;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 4px;
+    padding: 4px 0;
+}
+
+.mode-selector-dropdown .Select-option {
+    background: transparent !important;
+    color: var(--text-primary) !important;
+    padding: 12px 15px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    display: flex !important;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.mode-selector-dropdown .Select-option:last-child {
+    border-bottom: none;
+}
+
+.mode-selector-dropdown .Select-option:hover {
+    background: rgba(3, 206, 164, 0.08) !important;
+}
+
+.mode-selector-dropdown .Select-option.is-selected {
+    background: rgba(3, 206, 164, 0.15) !important;
+    font-weight: 500;
+}
+
+/* Enhance the icons in dropdown */
+.mode-selector-dropdown .Select-option i {
+    width: 20px;
+    text-align: center;
+    color: var(--mint);
+    margin-right: 10px;
+}
+
+/* Selected values styling */
+.mode-selector-dropdown .Select-value {
+    background: rgba(3, 206, 164, 0.1) !important;
+    border: 1px solid var(--mint) !important;
+    border-radius: 4px !important;
+    color: var(--text-primary) !important;
+    margin: 2px;
+    padding: 2px 8px;
+}
+
+.mode-selector-dropdown .Select-value-icon {
+    border-right: 1px solid rgba(3, 206, 164, 0.2) !important;
+    padding: 2px 5px;
+}
+
+.mode-selector-dropdown .Select-value-icon:hover {
+    background: rgba(3, 206, 164, 0.2) !important;
+    color: var(--text-primary) !important;
+}
