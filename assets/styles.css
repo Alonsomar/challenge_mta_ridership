@@ -693,3 +693,87 @@ section {
     background: rgba(3, 206, 164, 0.2) !important;
     color: var(--text-primary) !important;
 }
+
+/* Estilos mejorados para las tarjetas de resumen */
+.counter-number {
+    font-weight: 600;
+    color: var(--yinmn-blue);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    animation: countUp 2s ease-out;
+}
+
+.trend-value {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.trend-progress-container {
+    height: 8px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.trend-progress-bar {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--mint), var(--saffron));
+}
+
+/* Estilos para el medidor de recuperación */
+.gauge-chart {
+    height: 200px !important;
+    margin-bottom: -20px;
+}
+
+.sparkline-container {
+    height: 50px;
+    margin-top: -30px;
+}
+
+.sparkline-chart {
+    height: 100% !important;
+}
+
+/* Estilos para la tabla de rankings */
+.rankings-card .dash-table-container {
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.rankings-card .dash-header {
+    font-weight: 600;
+    color: var(--yinmn-blue);
+}
+
+.progress-bar-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.inline-progress {
+    flex-grow: 1;
+    height: 6px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.inline-progress-value {
+    height: 100%;
+    background: linear-gradient(90deg, var(--mint), var(--saffron));
+    border-radius: 3px;
+    transition: width 1s ease-in-out;
+}
+
+/* Animaciones */
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

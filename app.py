@@ -119,12 +119,21 @@ summary_cards = dbc.Row([
                     html.H4("Total Ridership", className="card-title text-center mb-1"),
                     html.I(className="fas fa-info-circle ms-2", id="ridership-info"),
                 ], className="d-flex justify-content-center align-items-center"),
-                html.H2(id="total-ridership", className="text-center text-primary my-3"),
-                html.P(id="ridership-trend", className="text-center mb-0"),
-                html.P("vs previous 30-day period", className="text-muted text-center small"),
-                dbc.Progress(id="trend-progress", className="my-2"),
-            ], className="position-relative")
-        ], className="h-100 shadow-sm border-primary")
+                html.Div([
+                    html.H2(id="total-ridership", className="text-center display-4 my-3 counter-number"),
+                    html.Div([
+                        html.I(id="trend-icon", className="fas fa-arrow-up me-2"),
+                        html.Span(id="ridership-trend", className="trend-value"),
+                    ], className="d-flex justify-content-center align-items-center mb-2"),
+                    html.P("vs previous 30-day period", className="text-muted text-center small"),
+                    dbc.Progress([
+                        dbc.Progress(id="trend-progress-value", value=0, 
+                                   className="trend-progress-bar", 
+                                   style={"transition": "width 1s ease-in-out"})
+                    ], id="trend-progress", className="trend-progress-container my-2"),
+                ], className="ridership-content")
+            ])
+        ], className="h-100 shadow-sm border-primary ridership-card")
     ], width=4),
     
     # Recovery Progress Card
@@ -135,14 +144,24 @@ summary_cards = dbc.Row([
                     html.H4("Recovery Progress", className="card-title text-center mb-1"),
                     html.I(className="fas fa-info-circle ms-2", id="recovery-info"),
                 ], className="d-flex justify-content-center align-items-center"),
-                dcc.Graph(
-                    id="recovery-gauge", 
-                    config={'displayModeBar': False},
-                    className="my-2"
-                ),
-                html.P("Compared to pre-pandemic baseline", className="text-muted text-center small mb-0")
+                html.Div([
+                    dcc.Graph(
+                        id="recovery-gauge",
+                        config={'displayModeBar': False},
+                        className="gauge-chart"
+                    ),
+                    html.Div([
+                        dcc.Graph(
+                            id="recovery-sparkline",
+                            config={'displayModeBar': False},
+                            className="sparkline-chart"
+                        )
+                    ], className="sparkline-container"),
+                ], className="recovery-content"),
+                html.P("Compared to pre-pandemic baseline", 
+                      className="text-muted text-center small mb-0")
             ])
-        ], className="h-100 shadow-sm border-success")
+        ], className="h-100 shadow-sm border-success recovery-card")
     ], width=4),
     
     # Mode Rankings Card
@@ -155,6 +174,13 @@ summary_cards = dbc.Row([
                 ], className="d-flex justify-content-center align-items-center"),
                 dash_table.DataTable(
                     id='mode-rankings',
+                    columns=[
+                        {"name": "", "id": "icon", "presentation": "markdown"},
+                        {"name": "Mode", "id": "mode"},
+                        {"name": "Ridership", "id": "ridership"},
+                        {"name": "Recovery", "id": "recovery"},
+                        {"name": "Progress", "id": "progress", "presentation": "markdown"}
+                    ],
                     style_cell={
                         'textAlign': 'left',
                         'padding': '10px',
@@ -171,10 +197,11 @@ summary_cards = dbc.Row([
                             'backgroundColor': '#f8f9fa'
                         }
                     ],
+                    markdown_options={"html": True},
                     page_size=5
                 )
             ])
-        ], className="h-100 shadow-sm border-info")
+        ], className="h-100 shadow-sm border-info rankings-card")
     ], width=4),
 ])
 

@@ -133,18 +133,6 @@ class MTARidershipData:
         
         return summary
     
-    def detect_anomalies(self, threshold=3):
-        """Detect anomalies in ridership data using z-score method."""
-        if self.processed_data is None:
-            logger.error("No processed data available")
-            return None
-        
-        def mark_anomalies(group):
-            z_scores = np.abs(stats.zscore(group['Ridership']))
-            return z_scores > threshold
-        
-        anomalies = self.processed_data.groupby('Mode').apply(mark_anomalies)
-        return self.processed_data[anomalies]
     
     def add_timeline_events(self):
         """Add enhanced timeline events with detailed context and impact analysis"""
