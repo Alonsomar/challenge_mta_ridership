@@ -462,6 +462,51 @@ def create_chart_section(title, chart_id, info_id, narrative_content, info_icon=
         ], className="section-content")
     ], id=f"section-{chart_id}")
 
+# Create intro section
+intro_section = html.Div([
+    # Main intro
+    html.Div([
+        html.H1([
+            html.I(className="fas fa-subway me-2", style={"color": "var(--saffron)"}),
+            "MTA Ridership Recovery Dashboard"
+        ], className="intro-title"),
+        html.P([
+            "Explore how New York City's public transportation system has evolved since the COVID-19 pandemic, ",
+            "tracking the recovery journey across different transit modes and revealing changing patterns in urban mobility."
+        ], className="intro-subtitle"),
+    ], className="intro-header"),
+    
+    # Key points
+    html.Div([
+        html.Div([
+            html.I(className="fas fa-chart-line"),
+            html.H3("Recovery Tracking"),
+            html.P("Monitor ridership recovery across all MTA transit modes, from subways to bridges and tunnels.")
+        ], className="intro-feature"),
+        
+        html.Div([
+            html.I(className="fas fa-calendar-alt"),
+            html.H3("Historical Comparison"),
+            html.P("Compare current ridership with pre-pandemic levels and analyze year-over-year trends.")
+        ], className="intro-feature"),
+        
+        html.Div([
+            html.I(className="fas fa-map-marked-alt"),
+            html.H3("Mode Analysis"),
+            html.P("Understand how different transit modes are recovering and adapting to new travel patterns.")
+        ], className="intro-feature")
+    ], className="intro-features"),
+    
+    # Call to action
+    html.Div([
+        html.P([
+            "Use the filters below to customize your analysis and explore specific aspects of NYC's transit recovery."
+        ], className="intro-cta"),
+        html.I(className="fas fa-arrow-down intro-arrow")
+    ], className="intro-action")
+], className="intro-section")
+
+
 # Layout actualizado
 app.layout = html.Div([
     dcc.Location(id='url'),
@@ -523,6 +568,7 @@ app.layout = html.Div([
         [
             tooltips,
             dbc.Container([
+                intro_section, 
                 dbc.Row([dbc.Col([controls], md=12)], className="mb-4"),
                 dbc.Row([dbc.Col([summary_cards], md=12)], className="summary-cards"),
                 create_chart_section("Ridership Trends", 
