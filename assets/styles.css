@@ -269,13 +269,138 @@ h2.text-primary {
 
 /* Enhanced section spacing */
 section {
+    position: relative;
+    padding: 2rem;
     margin: 2rem 0;
-    padding: 1.5rem;
     background: var(--glass-bg);
     border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Section Header Area */
+.section-header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--saffron);
+    padding-bottom: 0.75rem;
+}
+
+.section-header {
+    font-size: 1.75rem;
+    color: var(--yinmn-blue);
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Overview Title */
+.overview-title {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Narrative Container - Proper Alignment */
+.narrative-container {
+    margin: 0 0 .2rem 0;
+    padding: 1.25rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--card-blur));
+    -webkit-backdrop-filter: blur(var(--card-blur));
+    border: 1px solid var(--glass-border);
+    border-left: 4px solid var(--saffron);
+    border-radius: 8px;
     box-shadow: var(--shadow-sm);
     transition: all 0.3s ease;
+}
+
+.narrative-text {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    text-align: justify;
+    font-weight: 400;
+}
+
+.narrative-text i {
+    color: var(--yinmn-blue);
+    opacity: 0.8;
+    width: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.narrative-container:hover i {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Ensure proper spacing after icons */
+.narrative-text br {
+    content: "";
+    display: block;
+    margin: 0.5rem 0;
+}
+
+/* Chart Container - Proper Spacing */
+.chart-container {
+    position: relative;
+    height: 550px;
+    margin-top: 1rem;
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(var(--section-blur));
+    -webkit-backdrop-filter: blur(var(--section-blur));
+    border-radius: 12px;
     border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+/* Section Content Layout */
+.section-content {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+}
+
+/* Ensure proper stacking and spacing */
+.section-header-container + .narrative-container {
+    margin-top: 1rem;
+}
+
+.narrative-container + .chart-container {
+    margin-top: 1rem;
+}
+
+/* Animation refinements */
+.narrative-container {
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hover effects */
+.narrative-container:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    background: var(--glass-bg-strong);
 }
 
 /* Filters card specific styling */
@@ -288,16 +413,6 @@ section {
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid var(--saffron);
-}
-
-/* Section headers */
-.section-header {
-    display: inline-block;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 3px solid var(--saffron);
-    color: var(--yinmn-blue);
-    font-weight: 600;
 }
 
 /* Dropdown and date picker refinements */
@@ -951,3 +1066,4 @@ section {
 .top-bar-link:hover img {
     opacity: 0.8;
 }
+

@@ -104,6 +104,7 @@ controls = dbc.Card([
                 ],
                 value=['Subways', 'Buses', 'LIRR', 'Metro-North', 'Access-A-Ride', 'Bridges and Tunnels', 'Staten Island Railway'],
                 multi=True,
+                clearable=False,
                 className="mode-selector-dropdown"
             ),
         ], className="mb-4"),
@@ -344,25 +345,121 @@ tooltips = html.Div([
     )
 ])
 
+
+narratives = {
+    "ridership_trends": [
+        html.Div([
+            html.P([
+                html.I(className="fas fa-chart-line me-2"),
+                "NYC public transit shows steady recovery since 2020, with subway ridership reaching ~70% of pre-pandemic levels and recent peaks exceeding 3.5M daily riders."
+            ]),
+            html.P([
+                html.I(className="fas fa-building me-2"),
+                "Key events like school reopenings and office returns have significantly boosted recovery rates across all transit modes."
+            ])
+        ], className="narrative-text")
+    ],
+    
+    "mode_comparison": [
+        html.Div([
+            html.P([
+                html.I(className="fas fa-balance-scale me-2"),
+                "Recovery patterns vary significantly across transit modes. Bridges and Tunnels have exceeded pre-pandemic levels, while subway and buses show gradual improvement."
+            ]),
+            html.P([
+                html.I(className="fas fa-wheelchair me-2"),
+                "Access-A-Ride has notably surpassed 2019 levels, indicating increased demand for accessible transit services."
+            ])
+        ], className="narrative-text")
+    ],
+    
+    "yearly_comparison": [
+        html.Div([
+            html.P([
+                html.I(className="fas fa-calendar-alt me-2"),
+                "Year-over-year comparison shows consistent improvement in ridership levels."
+            ]),
+            html.P([
+                html.I(className="fas fa-chart-bar me-2"),
+                "2024 patterns demonstrate significantly higher usage than previous years, with improved resilience during holiday periods while maintaining predictable seasonal patterns."
+            ])
+        ], className="narrative-text")
+    ],
+    
+    "recovery_timeline": [
+        html.Div([
+            html.P([
+                html.I(className="fas fa-route me-2"),
+                "Different modes show distinct recovery trajectories. While Access-A-Ride and Bridges & Tunnels exceed pre-pandemic levels, subway and buses have stabilized at 60-70%."
+            ]),
+            html.P([
+                html.I(className="fas fa-train me-2"),
+                "LIRR and Metro-North show steady recovery, reflecting evolving commuter patterns."
+            ])
+        ], className="narrative-text")
+    ],
+    
+    "weekday_weekend": [
+        html.Div([
+            html.P([
+                html.I(className="fas fa-calendar-week me-2"),
+                "Recovery patterns reveal interesting shifts between weekday and weekend ridership."
+            ]),
+            html.P([
+                html.I(className="fas fa-home me-2"),
+                "Some modes, particularly LIRR and Metro-North, show stronger weekend recovery, suggesting lasting changes in commuter behavior and the impact of remote work."
+            ])
+        ], className="narrative-text")
+    ],
+    
+    "monthly_recovery": [
+        html.Div([
+            html.P([
+                html.I(className="fas fa-chart-area me-2"),
+                "Monthly patterns highlight varying recovery speeds across modes."
+            ]),
+            html.P([
+                html.I(className="fas fa-tachometer-alt me-2"),
+                "Recent data shows strong recovery in Access-A-Ride and Bridges & Tunnels, while other modes progress steadily toward pre-pandemic levels, each following distinct recovery trajectories."
+            ])
+        ], className="narrative-text")
+    ]
+}
+
 # Update the chart sections to include info icons
-def create_chart_section(title, chart_id, info_id, info_icon=True, additional_controls=None):
-    """Helper function to create consistent chart sections with tooltips"""
+def create_chart_section(title, chart_id, info_id, narrative_content, info_icon=True, additional_controls=None):
+    """Helper function to create consistent chart sections with tooltips and narrative"""
     return html.Section([
-        dbc.Row([
-            dbc.Col([
-                html.Div([
-                    html.H2(title, className="section-header"),
-                    html.I(className="fas fa-info-circle ms-2", id=info_id) if info_icon else None,
-                ], className="d-flex align-items-center mb-3"),
-                additional_controls if additional_controls else None,
-                html.Div([
-                    dcc.Graph(
-                        id=chart_id,
-                        config={'displayModeBar': False, 'responsive': True}
-                    )
-                ], className="chart-container")
-            ], width=12)
-        ], className="mb-4")
+        # Header Container
+        html.Div([
+            # Left side - Main title
+            html.Div([
+                html.H2(title, className="section-header"),
+                html.I(className="fas fa-info-circle ms-2", id=info_id) if info_icon else None,
+            ], className="d-flex align-items-center"),
+            # Right side - Overview title
+            html.H3("Overview", className="overview-title"),
+        ], className="section-header-container"),
+        
+        # Content Container
+        html.Div([
+            # Narrative
+            html.Div(
+                narrative_content,
+                className="narrative-container"
+            ),
+            
+            # Additional Controls (if any)
+            additional_controls if additional_controls else None,
+            
+            # Chart
+            html.Div([
+                dcc.Graph(
+                    id=chart_id,
+                    config={'displayModeBar': False, 'responsive': True}
+                )
+            ], className="chart-container")
+        ], className="section-content")
     ], id=f"section-{chart_id}")
 
 # Layout actualizado
@@ -428,12 +525,19 @@ app.layout = html.Div([
             dbc.Container([
                 dbc.Row([dbc.Col([controls], md=12)], className="mb-4"),
                 dbc.Row([dbc.Col([summary_cards], md=12)], className="summary-cards"),
-                create_chart_section("Ridership Trends", "overview-chart", "overview-chart-info"),
-                create_chart_section("Mode Comparison", "mode-comparison-chart", "mode-comparison-info"),
+                create_chart_section("Ridership Trends", 
+                                     "overview-chart", 
+                                     "overview-chart-info",
+                                     narratives["ridership_trends"]),
+                create_chart_section("Mode Comparison", 
+                                     "mode-comparison-chart", 
+                                     "mode-comparison-info",
+                                     narratives["mode_comparison"]),
                 create_chart_section(
                     "Year-over-Year Comparison", 
                     "yearly-comparison-chart", 
                     "yearly-comparison-info",
+                    narratives["yearly_comparison"],
                     additional_controls=html.Div([
                         html.Label("Select Mode for Comparison", className="mb-2"),
                         dcc.Dropdown(
@@ -450,17 +554,20 @@ app.layout = html.Div([
                     create_chart_section(
                         "Recovery Timeline Analysis", 
                         "recovery-timeline", 
-                        "recovery-timeline-info"
+                        "recovery-timeline-info",
+                        narratives["recovery_timeline"]
                     ),
                     create_chart_section(
                         "Weekday vs Weekend Patterns", 
                         "weekday-weekend-comparison", 
-                        "weekday-weekend-info"
+                        "weekday-weekend-info",
+                        narratives["weekday_weekend"]
                     ),
                     create_chart_section(
                         "Monthly Recovery Patterns", 
                         "monthly-recovery-heatmap", 
-                        "monthly-recovery-info"
+                        "monthly-recovery-info",
+                        narratives["monthly_recovery"]
                     )
                 ], className="recovery-analysis-container")
             ], fluid=True)
