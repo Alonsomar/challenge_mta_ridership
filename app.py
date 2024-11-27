@@ -120,17 +120,47 @@ summary_cards = dbc.Row([
                     html.I(className="fas fa-info-circle ms-2", id="ridership-info"),
                 ], className="d-flex justify-content-center align-items-center"),
                 html.Div([
+                    # Main ridership number
                     html.H2(id="total-ridership", className="text-center display-4 my-3 counter-number"),
+                    
+                    # Trend section with enhanced styling
                     html.Div([
-                        html.I(id="trend-icon", className="fas fa-arrow-up me-2"),
-                        html.Span(id="ridership-trend", className="trend-value"),
-                    ], className="d-flex justify-content-center align-items-center mb-2"),
-                    html.P("vs previous 30-day period", className="text-muted text-center small"),
-                    dbc.Progress([
-                        dbc.Progress(id="trend-progress-value", value=0, 
-                                   className="trend-progress-bar", 
-                                   style={"transition": "width 1s ease-in-out"})
-                    ], id="trend-progress", className="trend-progress-container my-2"),
+                        # Trend indicator and percentage
+                        html.Div([
+                            html.I(id="trend-icon", className="fas fa-arrow-up me-2"),
+                            html.Span(id="ridership-trend", className="trend-value"),
+                        ], className="d-flex justify-content-center align-items-center mb-2"),
+                        
+                        # Additional metrics
+                        html.Div([
+                            html.Div([
+                                html.Span("Daily Average: ", className="metric-label"),
+                                html.Span(id="daily-avg", className="metric-value")
+                            ], className="d-flex justify-content-between mb-2"),
+                            html.Div([
+                                html.Span("Peak Day: ", className="metric-label"),
+                                html.Span(id="peak-day-value", className="metric-value")
+                            ], className="d-flex justify-content-between mb-2"),
+                        ], className="additional-metrics px-3 py-2"),
+                        
+                        # Period comparison text
+                        html.P("vs previous 30-day period", 
+                              className="text-muted text-center small mb-2"),
+                        
+                        # Progress bar
+                        dbc.Progress(
+                            value=0,  # Initial value
+                            id="trend-progress",
+                            className="trend-progress-bar",
+                            style={
+                                "transition": "width 1s ease-in-out",
+                                "height": "10px",
+                                "backgroundColor": "#E9ECEF",  # Light background for empty part
+                                "borderRadius": "4px",
+                            },
+                            color="primary",
+                        )
+                    ], className="trend-section")
                 ], className="ridership-content")
             ])
         ], className="h-100 shadow-sm border-primary ridership-card")
@@ -140,27 +170,46 @@ summary_cards = dbc.Row([
     dbc.Col([
         dbc.Card([
             dbc.CardBody([
+                # Título
                 html.Div([
                     html.H4("Recovery Progress", className="card-title text-center mb-1"),
                     html.I(className="fas fa-info-circle ms-2", id="recovery-info"),
                 ], className="d-flex justify-content-center align-items-center"),
+                
+                # Contenedor principal con dimensiones controladas
                 html.Div([
-                    dcc.Graph(
-                        id="recovery-gauge",
-                        config={'displayModeBar': False},
-                        className="gauge-chart"
-                    ),
+                    # Gauge container con dimensiones fijas
                     html.Div([
                         dcc.Graph(
-                            id="recovery-sparkline",
+                            id="recovery-gauge",
                             config={'displayModeBar': False},
-                            className="sparkline-chart"
-                        )
-                    ], className="sparkline-container"),
-                ], className="recovery-content"),
-                html.P("Compared to pre-pandemic baseline", 
-                      className="text-muted text-center small mb-0")
-            ])
+                            className="gauge-chart",
+                            style={'height': '140px'}  # Forzar altura
+                        ),
+                    ], className="gauge-container"),
+                    
+                    # Métricas
+                    html.Div([
+                        html.Div([
+                            html.Div([
+                                html.Span("Current Recovery", className="metric-label"),
+                                html.Span(id="current-recovery", className="metric-value")
+                            ], className="d-flex justify-content-between mb-2"),
+                            html.Div([
+                                html.Span("Peak Recovery", className="metric-label"),
+                                html.Span(id="peak-recovery", className="metric-value")
+                            ], className="d-flex justify-content-between mb-2"),
+                        ], className="recovery-metrics-inner"),
+                    ], className="recovery-metrics px-3 py-2 mt-2"),
+                    
+                    # Texto base
+                    html.P([
+                        "Compared to ",
+                        html.Strong("2019 baseline"),
+                        " ridership levels"
+                    ], className="baseline-text mt-2")
+                ], className="recovery-content")
+            ], className="d-flex flex-column")
         ], className="h-100 shadow-sm border-success recovery-card")
     ], width=4),
     
@@ -172,35 +221,37 @@ summary_cards = dbc.Row([
                     html.H4("Mode Rankings", className="card-title text-center mb-1"),
                     html.I(className="fas fa-info-circle ms-2", id="rankings-info"),
                 ], className="d-flex justify-content-center align-items-center"),
-                dash_table.DataTable(
-                    id='mode-rankings',
-                    columns=[
-                        {"name": "", "id": "icon", "presentation": "markdown"},
-                        {"name": "Mode", "id": "mode"},
-                        {"name": "Ridership", "id": "ridership"},
-                        {"name": "Recovery", "id": "recovery"},
-                        {"name": "Progress", "id": "progress", "presentation": "markdown"}
-                    ],
-                    style_cell={
-                        'textAlign': 'left',
-                        'padding': '10px',
-                        'fontFamily': '"Segoe UI", sans-serif'
-                    },
-                    style_header={
-                        'fontWeight': 'bold',
-                        'backgroundColor': '#f8f9fa',
-                        'borderBottom': '2px solid #dee2e6'
-                    },
-                    style_data_conditional=[
-                        {
-                            'if': {'row_index': 'odd'},
-                            'backgroundColor': '#f8f9fa'
-                        }
-                    ],
-                    markdown_options={"html": True},
-                    page_size=5
-                )
-            ])
+                html.Div([
+                    dash_table.DataTable(
+                        id='mode-rankings',
+                        columns=[
+                            {"name": "Mode", "id": "mode"},
+                            {"name":  ["Total", "Ridership"], "id": "ridership"},
+                            {"name": "Recovery", "id": "recovery"}
+                        ],
+                        style_table={'height': '180px'},  # Control altura
+                        style_cell={
+                            'textAlign': 'left',
+                            'padding': '3px 3px',
+                            'fontFamily': '"Segoe UI", sans-serif',
+                            'fontSize': '0.85rem',
+                            'verticalAlign': 'middle'
+                        },
+                        style_header={
+                            'fontWeight': '600',
+                            'backgroundColor': 'rgba(52, 89, 149, 0.05)',
+                            'borderBottom': '2px solid var(--saffron)',
+                            'color': 'var(--text-primary)',
+                            'whiteSpace': 'normal'
+                        },
+                        style_data={
+                            'backgroundColor': 'transparent'
+                        },
+                        markdown_options={"html": True},
+                        page_size=7
+                    )
+                ], className="rankings-table-container")
+            ], className="d-flex flex-column")
         ], className="h-100 shadow-sm border-info rankings-card")
     ], width=4),
 ])
@@ -335,6 +386,21 @@ app.layout = html.Div([
         # Lado derecho con enlaces
         html.Div([
             html.A(
+                html.Img(
+                    src='assets/MTA_logo.png',
+                    style={
+                        'filter': 'brightness(0) invert(1)',  # Hace el logo blanco
+                        'height': '20px',  # Ajustado para coincidir con los iconos de Font Awesome
+                        'width': 'auto',
+                        'opacity': '1'  # Para coincidir con la opacidad de los otros iconos
+                    }
+                ),
+                href="https://new.mta.info/",
+                target="_blank",
+                className="top-bar-link",
+                title="Visit MTA Website"
+            ),
+            html.A(
                 html.I(className="fas fa-globe"),
                 href="https://alonsovaldes.com",
                 target="_blank",
@@ -452,10 +518,13 @@ def update_charts(selected_modes):
     [Output('total-ridership', 'children'),
      Output('ridership-trend', 'children'),
      Output('trend-progress', 'value'),
-     Output('trend-progress', 'color'),
      Output('recovery-gauge', 'figure'),
      Output('mode-rankings', 'data'),
-     Output('mode-rankings', 'columns')],
+     Output('mode-rankings', 'columns'),
+     Output('daily-avg', 'children'),
+     Output('peak-day-value', 'children'),
+     Output('current-recovery', 'children'),
+        Output('peak-recovery', 'children')],
     [Input('mode-selector', 'value')]
 )
 def update_summary_stats(selected_modes):
@@ -483,33 +552,41 @@ def update_summary_stats(selected_modes):
     
     # Enhanced trend formatting
     trend_icon = "↑" if trend_pct > 0 else "↓"
-    trend_color = "success" if trend_pct > 0 else "danger"
     trend_text = f"{trend_icon} {abs(trend_pct):.1f}% ({current_period:,.0f} avg. daily riders)"
-    progress_value = min(abs(trend_pct), 100)
+    progress_value = min(abs(trend_pct),100)
     
     # Enhanced recovery calculation
     avg_recovery = filtered_data.groupby('Date')['Recovery_Percentage'].mean().mean()
     peak_recovery = filtered_data.groupby('Date')['Recovery_Percentage'].mean().max()
     
-    # Update gauge figure with peak recovery annotation
+    # Update gauge figure with improved visualization
     gauge_fig = go.Figure(go.Indicator(
-        mode="gauge+number+delta",
+        mode="gauge+number",
         value=avg_recovery * 100,
-        delta={'reference': peak_recovery * 100, 'relative': False},
-        title={'text': "Recovery Rate", 'font': {'size': 24, 'color': '#345995'}},
+        number={
+            'font': {'size': 32, 'color': '#345995'},  # Reduced from 40
+            'suffix': '%'
+        },
         gauge={
-            'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': '#2c3e50'},
+            'axis': {
+                'range': [0, 100],
+                'tickwidth': 1,
+                'tickcolor': '#2c3e50',
+                'ticktext': ['0%', '25%', '50%', '75%', '100%'],
+                'tickvals': [0, 25, 50, 75, 100]
+            },
             'bar': {'color': '#345995'},
             'bgcolor': 'white',
             'borderwidth': 2,
             'bordercolor': '#f8f9fa',
             'steps': [
-                {'range': [0, 50], 'color': 'rgba(251, 77, 61, 0.1)'},
-                {'range': [50, 75], 'color': 'rgba(234, 196, 53, 0.1)'},
-                {'range': [75, 100], 'color': 'rgba(3, 206, 164, 0.1)'}
+                {'range': [0, 25], 'color': 'rgba(251, 77, 61, 0.1)'},
+                {'range': [25, 50], 'color': 'rgba(251, 77, 61, 0.15)'},
+                {'range': [50, 75], 'color': 'rgba(234, 196, 53, 0.2)'},
+                {'range': [75, 100], 'color': 'rgba(3, 206, 164, 0.25)'}
             ],
             'threshold': {
-                'line': {'color': '#e40066', 'width': 4},
+                'line': {'color': '#e40066', 'width': 2},
                 'thickness': 0.75,
                 'value': peak_recovery * 100
             }
@@ -517,38 +594,83 @@ def update_summary_stats(selected_modes):
     ))
     
     gauge_fig.update_layout(
-        height=200,
-        margin=dict(l=10, r=10, t=30, b=10),
-        paper_bgcolor='white',
-        font={'family': "Arial"}
+        height=140,
+        margin=dict(l=5, r=5, t=5, b=5),
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font={'family': "Arial"},
+        autosize=True
     )
+    
+
+    def format_ridership(value):
+        if value >= 1_000_000:
+            return f"{value/1_000_000:,.1f}M"
+        elif value >= 1_000:
+            return f"{value/1_000:,.1f}K"
+        return f"{value:.0f}"
+
+    # Diccionario de íconos por modo
+    MODE_ICONS = {
+        'Subways': '<i class="fas fa-subway"></i>',
+        'Buses': '<i class="fas fa-bus"></i>',
+        'LIRR': '<i class="fas fa-train"></i>',
+        'Metro-North': '<i class="fas fa-train"></i>',
+        'Access-A-Ride': '<i class="fas fa-wheelchair"></i>',
+        'Bridges and Tunnels': '<i class="fas fa-road"></i>',
+        'Staten Island Railway': '<i class="fas fa-subway"></i>'
+    }
     
     # Enhanced rankings table
     rankings_df = filtered_data.groupby('Mode').agg({
         'Ridership': 'sum',
         'Recovery_Percentage': 'mean'
-    }).round(2)
-    
-    # Format the values before converting to records
-    rankings_df['Ridership'] = rankings_df['Ridership'].apply(lambda x: f"{x:,.0f}")
+    }).round(4)  # Aumentamos la precisión antes de formatear
+
+    # Multiplicamos por 100 antes de ordenar
+    rankings_df['Recovery_Percentage'] = rankings_df['Recovery_Percentage'] * 100
+
+    # Ordenamos por Recovery_Percentage en orden descendente
+    rankings_df = rankings_df.sort_values('Recovery_Percentage', ascending=False)
+
+    # Agregar íconos
+    rankings_df['Mode_with_icon'] = rankings_df.index.map(
+        lambda x: f'<div class="mode-cell">{MODE_ICONS[x]} {x}</div>'
+    )
+
+    # Format the values after sorting
+    rankings_df['Ridership'] = rankings_df['Ridership'].apply(format_ridership)
     rankings_df['Recovery_Percentage'] = rankings_df['Recovery_Percentage'].apply(lambda x: f"{x:.1f}%")
-    rankings_df = rankings_df.sort_values('Ridership', ascending=False)
-    
+
     rankings_data = rankings_df.reset_index().to_dict('records')
     rankings_columns = [
-        {'name': 'Mode', 'id': 'Mode'},
+        {'name': 'Mode', 'id': 'Mode_with_icon', 'presentation': 'markdown'},
         {'name': 'Total Ridership', 'id': 'Ridership'},
         {'name': 'Recovery %', 'id': 'Recovery_Percentage'}
     ]
     
+    # New calculations for additional metrics
+    daily_avg = filtered_data['Ridership'].mean()
+    peak_day_data = filtered_data.loc[filtered_data['Ridership'].idxmax()]
+    peak_day_str = f"{peak_day_data['Date'].strftime('%b %d, %Y')} ({peak_day_data['Ridership']:,.0f})"
+    
+
+        # Format recovery values
+    current_recovery_text = f"{avg_recovery * 100:.1f}%"
+    peak_recovery_text = f"{peak_recovery * 100:.1f}%"
+    
+
     return (
         formatted_ridership,
         trend_text,
         progress_value,
-        trend_color,
         gauge_fig,
         rankings_data,
-        rankings_columns
+        rankings_columns,
+        f"{daily_avg:,.0f}",
+        peak_day_str,
+        current_recovery_text,
+        peak_recovery_text
     )
 
 @app.callback(

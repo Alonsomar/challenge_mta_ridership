@@ -9,8 +9,11 @@ let hueOffset = 0;
 
 function setup() {
     let canvas = createCanvas(windowWidth, windowHeight);
-    canvas.position(0, 0);
+    canvas.style('position', 'fixed');
+    canvas.style('top', '0');
+    canvas.style('left', '0');
     canvas.style('z-index', '-1');
+    canvas.style('pointer-events', 'none');
     colorMode(HSB, 360, 100, 100, 1);
     
     // Inicializar partículas

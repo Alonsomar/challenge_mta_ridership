@@ -17,7 +17,7 @@
     --glass-bg: rgba(255, 255, 255, 0.25);
     --glass-border: rgba(255, 255, 255, 0.18);
     --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-    --card-blur: 4px;
+    --card-blur: 2px;
     --section-blur: 4x;
 }
 
@@ -28,15 +28,32 @@ html, body {
 }
 
 body {
-    background: linear-gradient(135deg, 
-        rgba(245, 247, 250, 0.27), 
-        rgba(235, 240, 245, 0.25),
-        rgba(225, 235, 245, 0.28));
+    background: none;
     color: var(--text-primary);
     padding-top: 60px;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
+
+/* Background canvas container */
+#p5-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Ensure main content has proper stacking */
+#page-content {
+    position: relative;
+    z-index: 1;
+    background: transparent;
+}
+
 
 /* Navbar styling */
 .navbar {
@@ -113,22 +130,7 @@ section[id] {
     box-shadow: 0 15px 45px rgba(31, 38, 135, 0.2);
 }
 
-/* Progress bars */
-.progress {
-    height: 8px;
-    border-radius: 4px;
-    background-color: rgba(240, 242, 245, 0.3);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-}
 
-.progress-bar {
-    background-color: var(--mint);
-}
-
-.progress-bar.bg-danger {
-    background-color: var(--tomato);
-}
 
 /* Text and headings */
 .text-primary {
@@ -258,10 +260,6 @@ h2.text-primary {
     margin: 2rem 0 3rem 0;
 }
 
-/* Constrain the gauge chart height */
-#recovery-gauge {
-    height: 200px !important;
-}
 
 /* Add proper spacing for the data table */
 .dash-table-container {
@@ -325,10 +323,6 @@ section {
     }
 }
 
-.card {
-    animation: fadeInUp 0.6s ease-out;
-    animation-fill-mode: both;
-}
 
 /* Aplicar delays escalonados a las cards */
 .summary-cards .card:nth-child(1) { animation-delay: 0.1s; }
@@ -558,7 +552,7 @@ section {
 
 /* Mejorar los enlaces */
 .top-bar-link {
-    color: var(--saffron);
+    color: white;
     opacity: 0.85;
     transition: all 0.3s ease;
     padding: 0.7rem;
@@ -587,6 +581,10 @@ section {
 }
 
 .top-bar-link:hover i {
+    transform: scale(1.1);
+}
+
+.top-bar-link:hover img {
     transform: scale(1.1);
 }
 
@@ -709,7 +707,6 @@ section {
 
 .trend-progress-container {
     height: 8px;
-    background: rgba(0,0,0,0.05);
     border-radius: 4px;
     overflow: hidden;
 }
@@ -718,12 +715,6 @@ section {
     height: 100%;
     border-radius: 4px;
     background: linear-gradient(90deg, var(--mint), var(--saffron));
-}
-
-/* Estilos para el medidor de recuperación */
-.gauge-chart {
-    height: 200px !important;
-    margin-bottom: -20px;
 }
 
 .sparkline-container {
@@ -754,7 +745,6 @@ section {
 .inline-progress {
     flex-grow: 1;
     height: 6px;
-    background: rgba(0,0,0,0.05);
     border-radius: 3px;
     overflow: hidden;
 }
@@ -776,4 +766,195 @@ section {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Enhanced Total Ridership Card Styles */
+
+.counter-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--yinmn-blue);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    letter-spacing: -0.5px;
+}
+
+.trend-section {
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.additional-metrics {
+    background: rgba(52, 89, 149, 0.05);
+    border-radius: 6px;
+    border-left: 3px solid var(--yinmn-blue);
+    margin: 0.5rem 0;
+}
+
+.metric-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.metric-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.trend-progress-container {
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.trend-progress-bar {
+    background: linear-gradient(90deg, var(--mint) 0%, var(--yinmn-blue) 100%);
+}
+
+/* Recovery Progress Card specific styles */
+.recovery-card .card-body {
+    padding: 1rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.gauge-container {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+    height: 140px;
+    position: relative;
+}
+
+.gauge-chart {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.recovery-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0.5rem;
+    gap: 0.5rem;
+}
+
+.recovery-metrics {
+    background: rgba(52, 89, 149, 0.05);
+    border-radius: 6px;
+    border-left: 3px solid var(--mint);
+    width: 100%;
+    margin: 0 auto;
+}
+
+.baseline-text {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    text-align: center;
+    margin: 0;
+}
+
+/* Rankings Card specific styles */
+.rankings-card .card-body {
+    padding: 1rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.rankings-table-container {
+    flex: 1;
+    margin-top: 0.5rem;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* DataTable customization */
+.rankings-card .dash-table-container {
+    height: 100%;
+    max-height: 280px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.rankings-card .dash-table-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.rankings-card .dash-table-container::-webkit-scrollbar-thumb {
+    background: var(--mint);
+    border-radius: 3px;
+}
+
+.rankings-card .dash-table-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Row hover effect */
+.rankings-card .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner td:hover {
+    background-color: rgba(52, 89, 149, 0.05);
+    transition: background-color 0.2s ease;
+}
+
+
+
+/* Ajustar el estilo de los íconos en la tabla */
+.rankings-card .dash-table-container i {
+    margin-right: 8px;
+    width: 16px;
+    color: var(--yinmn-blue);
+}
+
+/* Rankings table specific styles */
+.rankings-card .dash-table-container {
+    font-family: 'Segoe UI', sans-serif !important;
+}
+
+.rankings-card .dash-cell {
+    font-family: 'Segoe UI', sans-serif !important;
+    font-size: 0.85rem !important;
+    vertical-align: middle !important;
+}
+
+.rankings-card .dash-header {
+    font-weight: 600 !important;
+    padding: 8px !important;
+    vertical-align: middle !important;
+}
+
+.rankings-card .dash-cell i {
+    margin-right: 8px;
+    color: var(--yinmn-blue);
+    opacity: 0.8;
+}
+
+/* Mode column markdown styling */
+.mode-cell {
+    font-family: 'Segoe UI', sans-serif !important;
+    font-size: 0.85rem !important;
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.mode-cell i {
+    margin-right: 3px;
+    color: var(--yinmn-blue);
+    opacity: 0.75;
+}
+
+.top-bar-link img {
+    transition: opacity 0.3s ease;
+    vertical-align: middle;
+}
+
+.top-bar-link:hover img {
+    opacity: 0.8;
 }
