@@ -50,7 +50,8 @@ app = dash.Dash(
     __name__, 
     external_stylesheets=[
         dbc.themes.FLATLY,
-        'https://use.fontawesome.com/releases/v5.15.4/css/all.css'
+        'https://use.fontawesome.com/releases/v5.15.4/css/all.css',
+                'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap'
     ],
     external_scripts=[
         'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js'
@@ -594,11 +595,11 @@ def update_summary_stats(selected_modes):
     ))
     
     gauge_fig.update_layout(
-        height=140,
+        height=100,
         margin=dict(l=5, r=5, t=5, b=5),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        font={'family': "Arial"},
+        font={'family': "Roboto"},
         autosize=True
     )
     

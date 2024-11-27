@@ -5,6 +5,35 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import timedelta
 import pandas as pd
+
+
+def apply_chart_template(fig, title=None, height=500):
+    """Apply consistent styling to all charts"""
+    fig.update_layout(
+        height=height,
+        title=dict(
+            text=title if title else "",
+            font=dict(size=24, color='#2c3e50'),
+            x=0.5,
+            y=0.95
+        ),
+        template='plotly_white',
+        margin=dict(l=60, r=150, t=100, b=60),
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=1.05,
+            bgcolor='rgba(255,255,255,0.8)',
+            bordercolor='rgba(0,0,0,0.1)',
+            borderwidth=1
+        ),
+        plot_bgcolor='white',
+        paper_bgcolor='white',
+        font=dict(family='Roboto')
+    )
+    return fig
+
 def generate_overview_chart(df, timeline_events=None):
     """Enhanced overview chart with improved timeline annotations and context"""
     # Calculate moving averages for each mode
@@ -117,15 +146,16 @@ def generate_overview_chart(df, timeline_events=None):
             }
         }
 
+        aditional_offset = 0.02
         # Phase markers
         phase_positions = {
             'initial': 0.45,
-            'lockdown': 0.50,
-            'early_recovery': 0.55,
-            'adaptation': 0.60,
-            'recovery': 0.65,
-            'late_recovery': 0.70,
-            'new_normal': 0.75
+            'lockdown': 0.50 + aditional_offset*1,
+            'early_recovery': 0.55+ aditional_offset*2,
+            'adaptation': 0.60+ aditional_offset*3,
+            'recovery': 0.65+ aditional_offset*4,
+            'late_recovery': 0.70+ aditional_offset*5,
+            'new_normal': 0.75+ aditional_offset*6
         }
 
         for i, (_, event) in enumerate(timeline_events.iterrows()):
@@ -182,7 +212,7 @@ def generate_overview_chart(df, timeline_events=None):
 
         fig.update_layout(annotations=annotations)
 
-    return fig
+    return apply_chart_template(fig, title="Overview", height=550)
 
 def generate_mode_comparison_chart(df):
     """Generate a comparative bar chart with animation capabilities."""
@@ -196,13 +226,12 @@ def generate_mode_comparison_chart(df):
         title='Monthly Ridership by Mode'
     )
     
-    fig.update_layout(
-        autosize=True,
-        height=400,
-        margin=dict(l=40, r=40, t=60, b=40)
-    )
     
-    return fig
+    return apply_chart_template(
+        fig,
+        title="Monthly Ridership by Mode",
+        height=550
+    )
 
 def generate_recovery_timeline(filtered_data):
     """Generate the recovery timeline visualization"""
@@ -234,25 +263,8 @@ def generate_recovery_timeline(filtered_data):
                             "Recovery: %{y:.1f}%<extra></extra>"
             )
         )
-    
-    fig.update_layout(
-        height=500,
-        title="Recovery Timeline: Different Paths to Normal",
-        showlegend=True,
-        legend=dict(
-            yanchor="top",
-            y=0.99,
-            xanchor="left",
-            x=1.05,
-            bgcolor='rgba(255,255,255,0.8)',
-            bordercolor='rgba(0,0,0,0.1)',
-            borderwidth=1
-        ),
-        template='plotly_white',
-        margin=dict(l=60, r=150, t=100, b=60)
-    )
-    
-    return fig
+        
+    return apply_chart_template(fig, title="Recovery Timeline: Different Paths to Normal", height=550)
 
 def generate_weekday_weekend_comparison(filtered_data):
     """Generate an enhanced weekday vs weekend violin plot with split violins"""
@@ -329,43 +341,18 @@ def generate_weekday_weekend_comparison(filtered_data):
     
     # Rest of the layout configuration remains the same
     fig.update_layout(
-        height=600,
-        title=dict(
-            text="Weekday vs Weekend Recovery Patterns",
-            font=dict(size=24, color='#2c3e50'),
-            x=0.5,
-            y=0.95
-        ),
-        violingap=0,
-        violinmode='overlay',
-        template='plotly_white',
-        margin=dict(l=60, r=150, t=100, b=60),
         xaxis=dict(
             title_text="Transportation Mode",
             title_font=dict(size=14),
-            tickangle=-45
         ),
         yaxis=dict(
             title_text="Recovery Rate (%)",
-            gridcolor='rgba(0,0,0,0.1)',
             zeroline=False,
             title_font=dict(size=14)
         ),
-        legend=dict(
-            yanchor="top",
-            y=0.99,
-            xanchor="left",
-            x=1.05,
-            bgcolor='rgba(255,255,255,0.8)',
-            bordercolor='rgba(0,0,0,0.1)',
-            borderwidth=1
-        ),
-        plot_bgcolor='white',
-        paper_bgcolor='white',
-        font=dict(family='Arial')
     )
     
-    return fig
+    return apply_chart_template(fig, title="Weekday vs Weekend Recovery Patterns", height=550)
 
 # Función auxiliar para convertir colores hex a rgba
 def rgb_to_rgba(hex_color):
@@ -421,34 +408,19 @@ def generate_monthly_recovery_heatmap(filtered_data):
     ])
     
     fig.update_layout(
-        height=500,
-        title=dict(
-            text="Monthly Recovery Evolution",
-            font=dict(size=24, color='#2c3e50'),
-            x=0.5,
-            y=0.95
-        ),
-        template='plotly_white',
-        margin=dict(l=60, r=150, t=100, b=60),
         xaxis=dict(
             title_text="Month-Year",
             title_font=dict(size=14),
             tickangle=-45,
-            gridcolor='rgba(0,0,0,0.1)',
-            type='category'
         ),
         yaxis=dict(
             title_text="Transportation Mode",
             title_font=dict(size=14),
-            gridcolor='rgba(0,0,0,0.1)',
             type='category'
         ),
-        plot_bgcolor='white',
-        paper_bgcolor='white',
-        font=dict(family='Arial')
     )
     
-    return fig
+    return apply_chart_template(fig, title="Monthly Recovery Evolution", height=550)
 
 def generate_yearly_comparison_chart(df, selected_mode):
     """Generate a year-over-year comparison chart for a selected mode."""
@@ -501,24 +473,9 @@ def generate_yearly_comparison_chart(df, selected_mode):
     
     # Update layout
     fig.update_layout(
-        title=dict(
-            text=f'{selected_mode} Ridership Patterns by Year',
-            font=dict(size=24, color='#2c3e50'),
-            x=0.5,
-            y=0.95
-        ),
         xaxis_title='Month',
         yaxis_title='Daily Ridership (7-day moving average)',
         showlegend=True,
-        legend=dict(
-            yanchor="top",
-            y=0.99,
-            xanchor="left",
-            x=1.05,
-            bgcolor='rgba(255,255,255,0.8)',
-            bordercolor='rgba(0,0,0,0.1)',
-            borderwidth=1
-        ),
         margin=dict(l=60, r=150, t=100, b=60),
         xaxis=dict(
             tickformat='%B',  # Nombre completo del mes
@@ -686,7 +643,7 @@ def generate_yearly_comparison_chart(df, selected_mode):
         annotations=annotations
     )
     
-    return fig
+    return apply_chart_template(fig, title=f"{selected_mode} Ridership Patterns by Year", height=550)
 
 def filter_data(mta_data, selected_modes):
     """Filter MTA data based on selected modes"""

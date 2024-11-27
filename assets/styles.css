@@ -15,10 +15,11 @@
     --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
     --transition: all 0.3s ease;
     --glass-bg: rgba(255, 255, 255, 0.25);
+    --glass-bg-strong: rgba(255, 255, 255, 0.35);
     --glass-border: rgba(255, 255, 255, 0.18);
     --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
     --card-blur: 2px;
-    --section-blur: 4x;
+    --section-blur: 3px;
 }
 
 html, body {
@@ -216,11 +217,11 @@ h2.text-primary {
 
 /* Fix chart container heights and make graphs transparent */
 .chart-container {
-    height: 800px;
+    height: 550px;
     width: 100%;
     position: relative;
     margin: 1rem 0;
-    background: var(--glass-bg);
+    background: var(--glass-bg-strong) !important;
     backdrop-filter: blur(var(--section-blur));
     -webkit-backdrop-filter: blur(var(--section-blur));
     border-radius: 12px;
@@ -251,7 +252,6 @@ h2.text-primary {
 }
 
 .chart-container:hover {
-    background: rgba(255, 255, 255, 0.3);
     box-shadow: 0 12px 40px rgba(31, 38, 135, 0.2);
 }
 
@@ -272,8 +272,6 @@ section {
     margin: 2rem 0;
     padding: 1.5rem;
     background: var(--glass-bg);
-    backdrop-filter: blur(var(--section-blur));
-    -webkit-backdrop-filter: blur(var(--section-blur));
     border-radius: 12px;
     box-shadow: var(--shadow-sm);
     transition: all 0.3s ease;
@@ -414,13 +412,7 @@ section {
     color: #345995;
 }
 
-/* Ajustes para los gráficos */
-.chart-container {
-    background-color: #fff;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+
 
 /* Sidebar specific styles */
 #sidebar .nav-link {
@@ -821,11 +813,12 @@ section {
 }
 
 .gauge-container {
-    width: 100%;
+    width: 80%;
     max-width: 280px;
     margin: 0 auto;
     height: 140px;
     position: relative;
+    vertical-align: top;
 }
 
 .gauge-chart {
