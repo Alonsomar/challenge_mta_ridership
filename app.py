@@ -51,7 +51,7 @@ app = dash.Dash(
     external_stylesheets=[
         dbc.themes.FLATLY,
         'https://use.fontawesome.com/releases/v5.15.4/css/all.css',
-                'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap'
+        'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap'
     ],
     external_scripts=[
         'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js'
@@ -464,51 +464,54 @@ def create_chart_section(title, chart_id, info_id, narrative_content, info_icon=
 
 # Create intro section
 intro_section = html.Div([
-    # Main intro
     html.Div([
-        html.H1([
-            html.I(className="fas fa-subway me-2", style={"color": "var(--saffron)"}),
-            "MTA Ridership Recovery Dashboard"
-        ], className="intro-title"),
-        html.P([
-            "Explore how New York City's public transportation system has evolved since the COVID-19 pandemic, ",
-            "tracking the recovery journey across different transit modes and revealing changing patterns in urban mobility."
-        ], className="intro-subtitle"),
-    ], className="intro-header"),
-    
-    # Key points
-    html.Div([
+        # Main intro
         html.Div([
-            html.I(className="fas fa-chart-line"),
-            html.H3("Recovery Tracking"),
-            html.P("Monitor ridership recovery across all MTA transit modes, from subways to bridges and tunnels.")
-        ], className="intro-feature"),
+            html.H1([
+                html.I(className="fas fa-subway me-2", style={"color": "var(--saffron)"}),
+                "MTA Ridership Recovery Dashboard"
+            ], className="intro-title"),
+            html.P([
+                "Explore how New York City's public transportation system has evolved since the COVID-19 pandemic, ",
+                "tracking the recovery journey across different transit modes and revealing changing patterns in urban mobility."
+            ], className="intro-subtitle"),
+        ], className="intro-header"),
         
+        # Key points
         html.Div([
-            html.I(className="fas fa-calendar-alt"),
-            html.H3("Historical Comparison"),
-            html.P("Compare current ridership with pre-pandemic levels and analyze year-over-year trends.")
-        ], className="intro-feature"),
+            html.Div([
+                html.I(className="fas fa-chart-line"),
+                html.H3("Recovery Tracking"),
+                html.P("Monitor ridership recovery across all MTA transit modes, from subways to bridges and tunnels.")
+            ], className="intro-feature"),
+            
+            html.Div([
+                html.I(className="fas fa-calendar-alt"),
+                html.H3("Historical Comparison"),
+                html.P("Compare current ridership with pre-pandemic levels and analyze year-over-year trends.")
+            ], className="intro-feature"),
+            
+            html.Div([
+                html.I(className="fas fa-map-marked-alt"),
+                html.H3("Mode Analysis"),
+                html.P("Understand how different transit modes are recovering and adapting to new travel patterns.")
+            ], className="intro-feature")
+        ], className="intro-features"),
         
+        # Call to action
         html.Div([
-            html.I(className="fas fa-map-marked-alt"),
-            html.H3("Mode Analysis"),
-            html.P("Understand how different transit modes are recovering and adapting to new travel patterns.")
-        ], className="intro-feature")
-    ], className="intro-features"),
-    
-    # Call to action
-    html.Div([
-        html.P([
-            "Use the filters below to customize your analysis and explore specific aspects of NYC's transit recovery."
-        ], className="intro-cta"),
-        html.I(className="fas fa-arrow-down intro-arrow")
-    ], className="intro-action")
-], className="intro-section")
+            html.P([
+                "Use the filters below to customize your analysis and explore specific aspects of NYC's transit recovery."
+            ], className="intro-cta"),
+            html.I(className="fas fa-arrow-down intro-arrow")
+        ], className="intro-action")
+    ], style={'position': 'relative', 'zIndex': '1'})
+], className="intro-section", style={'position': 'relative', 'overflow': 'hidden'})
 
 
 # Layout actualizado
 app.layout = html.Div([
+    html.Div(id='p5-background'),
     dcc.Location(id='url'),
     # Barra superior con toggle y enlaces
     html.Div([
@@ -596,26 +599,36 @@ app.layout = html.Div([
                         )
                     ])
                 ),
-                html.Div([
-                    create_chart_section(
+                create_chart_section(
                         "Recovery Timeline Analysis", 
                         "recovery-timeline", 
                         "recovery-timeline-info",
                         narratives["recovery_timeline"]
                     ),
-                    create_chart_section(
-                        "Weekday vs Weekend Patterns", 
-                        "weekday-weekend-comparison", 
-                        "weekday-weekend-info",
-                        narratives["weekday_weekend"]
-                    ),
-                    create_chart_section(
-                        "Monthly Recovery Patterns", 
-                        "monthly-recovery-heatmap", 
-                        "monthly-recovery-info",
-                        narratives["monthly_recovery"]
-                    )
-                ], className="recovery-analysis-container")
+                create_chart_section(
+                    "Weekday vs Weekend Patterns", 
+                    "weekday-weekend-comparison", 
+                    "weekday-weekend-info",
+                    narratives["weekday_weekend"]
+                ),
+                create_chart_section(
+                    "Monthly Recovery Patterns", 
+                    "monthly-recovery-heatmap", 
+                    "monthly-recovery-info",
+                    narratives["monthly_recovery"]
+                ),
+                html.Div([
+                    html.Div([
+                        html.H2("Journey Through Recovery", 
+                                className="conclusion-title"),
+                        html.P([
+                            "As we've explored the MTA's recovery journey, we've seen how New York's ",
+                            "transit system adapts and evolves. Like this train, the city keeps moving forward, ",
+                            "carrying millions of stories every day."
+                        ], className="conclusion-text")
+                    ], className="conclusion-content"),
+                    html.Div(id='train-canvas-container', className="conclusion-train")
+                ], className="conclusion-section")
             ], fluid=True)
         ],
         id="page-content",

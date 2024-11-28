@@ -1068,12 +1068,21 @@ section {
 
 /* Intro Section Styles */
 .intro-section {
-    padding: 3rem 1rem;
-    margin-bottom: 2rem;
-    background: var(--glass-bg);
-    border-radius: 12px;
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--shadow-md);
+    position: relative;
+    min-height: 600px;
+    overflow: hidden;
+    z-index: 1;
+}
+
+
+#p5-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    pointer-events: none;
 }
 
 .intro-header {
@@ -1166,5 +1175,99 @@ section {
     60% {
         transform: translateY(-10px);
     }
+}
+
+.conclusion-section {
+    position: relative;
+    min-height: 700px;
+    margin-top: 4rem;
+    margin-bottom: 6rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.conclusion-content {
+    text-align: center;
+    width: 400px;
+    height: 400px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.0);
+    padding: 2rem;
+    border-radius: 50%;
+    backdrop-filter: blur(var(--section-blur));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.conclusion-title {
+    color: var(--yinmn-blue);
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    max-width: 80%;
+    line-height: 1.2;
+}
+
+.conclusion-text {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 85%;
+    opacity: 0.9;
+}
+
+.conclusion-train {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.conclusion-train canvas {
+    display: block;
+    margin: 0 auto;
+}
+
+/* Ajuste para el contenedor principal cuando el sidebar está abierto */
+.sidebar-open .conclusion-section {
+    margin-left: 250px; /* Ancho del sidebar */
+    width: calc(100% - 250px);
+}
+
+/* Ajuste para cuando el sidebar está contraído */
+body:not(.sidebar-open) .conclusion-section {
+    width: 100%;
+    margin-left: 0;
+}
+
+/* Transición suave para todos los elementos */
+.conclusion-section,
+.conclusion-content,
+.conclusion-train {
+    transition: all 0.3s ease;
+}
+
+#train-canvas-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 1;
 }
 
