@@ -300,7 +300,7 @@ const trainSketch = (p) => {
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         new p5(trainSketch);
-    }, 100);
+    }, 300);
 });
 
 
