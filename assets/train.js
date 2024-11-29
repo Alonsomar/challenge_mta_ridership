@@ -20,7 +20,8 @@ const trainSketch = (p) => {
         if (container) {
             let canvas = p.createCanvas(container.offsetWidth, container.offsetHeight);
             canvas.parent('train-canvas-container');
-
+            
+            p.frameRate(30);
             p.pixelDensity(1);
             
             let minDim = Math.min(container.offsetWidth, container.offsetHeight);
