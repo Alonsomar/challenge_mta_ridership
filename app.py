@@ -13,17 +13,20 @@ from scripts.visualization import (
     generate_recovery_timeline,
     generate_weekday_weekend_comparison,
     generate_monthly_recovery_heatmap,
-    generate_yearly_comparison_chart,
-    filter_data
+    generate_yearly_comparison_chart
 )
 
 # Import the sidebar component and styles
 from components.sidebar import sidebar, SIDEBAR_STYLE, SIDEBAR_HIDDEN
 
+
+# Initialize cache arrays
+from scripts.visualization import initialize_cache_arrays, filter_data
 # Initialize and load data
 mta_data = MTARidershipData('data/MTA_Daily_Ridership.csv')
 mta_data.load_raw_data()
 mta_data.process_data()
+initialize_cache_arrays(mta_data)
 
 # Add this helper function at the top of the file
 def create_tooltip(target_id, tooltip_text):
@@ -668,9 +671,7 @@ def toggle_sidebar(n_clicks, sidebar_style, content_style):
 )
 def update_charts(selected_modes):
     # Filter data based on selections
-    filtered_data = mta_data.processed_data[
-        mta_data.processed_data['Mode'].isin(selected_modes)
-    ]
+    filtered_data = filter_data(mta_data, selected_modes)
     
     # Get timeline events
     timeline_events = mta_data.timeline_events
@@ -695,9 +696,7 @@ def update_charts(selected_modes):
     [Input('mode-selector', 'value')]
 )
 def update_summary_stats(selected_modes):
-    filtered_data = mta_data.processed_data[
-        mta_data.processed_data['Mode'].isin(selected_modes)
-    ]
+    filtered_data = filter_data(mta_data, selected_modes)
     
     # Enhanced total ridership calculation
     total_ridership = filtered_data['Ridership'].sum()

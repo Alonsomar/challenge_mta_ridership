@@ -5,7 +5,39 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import timedelta
 import pandas as pd
+from functools import lru_cache
+import numpy as np
 
+# Global variables for caching
+RIDERSHIP_ARRAY = None
+MODE_INDICES = None
+
+def initialize_cache_arrays(data):
+    """Initialize global cache arrays for faster filtering"""
+    global RIDERSHIP_ARRAY, MODE_INDICES
+    RIDERSHIP_ARRAY = data.processed_data.to_records(index=False)
+    unique_modes = data.processed_data['Mode'].unique()
+    MODE_INDICES = {mode: idx for idx, mode in enumerate(unique_modes)}
+
+def _prepare_modes_for_cache(modes):
+    """Helper function to prepare modes for caching"""
+    if modes is None:
+        return ('Subways',)
+    if isinstance(modes, str):
+        return (modes,)
+    return tuple(sorted(modes))  # Sort to ensure consistent caching
+
+@lru_cache(maxsize=32)
+def _cached_filter(modes_tuple):
+    """Internal cached function that works with tuples"""
+    mode_mask = np.isin(RIDERSHIP_ARRAY['Mode'], modes_tuple)
+    filtered_array = RIDERSHIP_ARRAY[mode_mask]
+    return pd.DataFrame.from_records(filtered_array)
+
+def filter_data(data, modes):
+    """Public interface for filtering data"""
+    modes_tuple = _prepare_modes_for_cache(modes)
+    return _cached_filter(modes_tuple)
 
 def apply_chart_template(fig, title=None, height=500):
     """Apply consistent styling to all charts"""
@@ -645,8 +677,3 @@ def generate_yearly_comparison_chart(df, selected_mode):
     
     return apply_chart_template(fig, title=f"{selected_mode} Ridership Patterns by Year", height=550)
 
-def filter_data(mta_data, selected_modes):
-    """Filter MTA data based on selected modes"""
-    return mta_data.processed_data[
-        mta_data.processed_data['Mode'].isin(selected_modes)
-    ]
