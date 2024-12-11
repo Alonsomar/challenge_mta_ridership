@@ -27,11 +27,16 @@ def _prepare_modes_for_cache(modes):
         return (modes,)
     return tuple(sorted(modes))  # Sort to ensure consistent caching
 
-@lru_cache(maxsize=32)
-def _cached_filter(modes_tuple):
+@lru_cache(maxsize=128)
+def _cached_filter(modes_tuple, start_date=None, end_date=None):
     """Internal cached function that works with tuples"""
     mode_mask = np.isin(RIDERSHIP_ARRAY['Mode'], modes_tuple)
     filtered_array = RIDERSHIP_ARRAY[mode_mask]
+    
+    if start_date and end_date:
+        date_mask = (filtered_array['Date'] >= start_date) & (filtered_array['Date'] <= end_date)
+        filtered_array = filtered_array[date_mask]
+    
     return pd.DataFrame.from_records(filtered_array)
 
 def filter_data(data, modes):
@@ -676,4 +681,15 @@ def generate_yearly_comparison_chart(df, selected_mode):
     )
     
     return apply_chart_template(fig, title=f"{selected_mode} Ridership Patterns by Year", height=550)
+
+@lru_cache(maxsize=32)
+def calculate_statistics(df_records, mode):
+    df = pd.DataFrame.from_records(df_records)
+    stats = {
+        'total_ridership': df['Ridership'].sum(),
+        'daily_avg': df['Ridership'].mean(),
+        'peak_day': df.loc[df['Ridership'].idxmax()]['Date'],
+        'peak_value': df['Ridership'].max()
+    }
+    return stats
 

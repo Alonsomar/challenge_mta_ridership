@@ -1,17 +1,18 @@
-# Use the official Python image from the Docker Hub
+# Usar imagen base ligera de Python
 FROM python:3.12-slim
 
-# Set the working directory in the container
+# Establecer directorio de trabajo
 WORKDIR /app
 
-# Copy the requirements file into the container
+# Copiar y instalar dependencias
 COPY requirements.txt requirements.txt
-
-# Install the dependencies specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code into the container
+# Copiar el resto del código
 COPY . .
 
-# Specify the command to run on container start
-CMD ["python", "app.py"]
+# Exponer el puerto 8050 (interno de Dash)
+EXPOSE 8050
+
+# Comando para ejecutar Gunicorn
+CMD ["gunicorn", "-c", "gunicorn_config.py", "app:server"]

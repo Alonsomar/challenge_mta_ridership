@@ -64,6 +64,8 @@ app = dash.Dash(
 
 app.title = "MTA Challenge"
 
+server = app.server
+
 # Filters and controls
 controls = dbc.Card([
     dbc.CardBody([
@@ -108,7 +110,9 @@ controls = dbc.Card([
                 value=['Subways', 'Buses', 'LIRR', 'Metro-North', 'Access-A-Ride', 'Bridges and Tunnels', 'Staten Island Railway'],
                 multi=True,
                 clearable=False,
-                className="mode-selector-dropdown"
+                className="mode-selector-dropdown",
+                persistence=True, 
+                persistence_type='session'
             ),
         ], className="mb-4"),
     ])
@@ -696,6 +700,9 @@ def update_charts(selected_modes):
     [Input('mode-selector', 'value')]
 )
 def update_summary_stats(selected_modes):
+    # Validación de entrada
+    if not selected_modes:
+        selected_modes = ['Subways']
     filtered_data = filter_data(mta_data, selected_modes)
     
     # Enhanced total ridership calculation
