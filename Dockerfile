@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Exponer el puerto 8050 (interno de Dash)
-EXPOSE 8050
+EXPOSE 8080
 
 # Comando para ejecutar Gunicorn
 CMD ["gunicorn", "-c", "gunicorn_config.py", "app:server"]

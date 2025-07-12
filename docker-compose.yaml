@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  mtachallenge:
+    build: .
+    container_name: mtachallenge
+    ports:
+      - "8080:8080"  # Asegúrate de que este puerto coincida con el que utiliza tu aplicación
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared-mtachallenge
+    environment:
+      - TZ=Europe/Madrid
+    command: >
+      tunnel --no-autoupdate run --token ${CLOUDFLARED_TOKEN}
+    restart: unless-stopped
+
